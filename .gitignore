@@ -1,0 +1,25 @@
+# venv
+venv/
+
+# python cache
+*.pyc
+__pycache__/
+
+# ??
+instance/
+
+# test
+.pytest_cache/
+.coverage
+htmlcov/
+
+# build
+dist/
+build/
+*.egg-info/
+
+# dev
+*.swo
+*.swp
+.DS_Store
+set_env_vars.sh
