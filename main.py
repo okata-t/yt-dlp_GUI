@@ -1,4 +1,6 @@
+import configparser
 import os
+import subprocess
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
@@ -7,6 +9,9 @@ import pyperclip
 
 
 class App(ctk.CTk):
+    opt = {"-f": '"bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]"'}
+    config = configparser.ConfigParser()
+    ini_path = "config.ini"
 
     def __init__(self):
         super().__init__()
@@ -17,11 +22,25 @@ class App(ctk.CTk):
         self.title("yt-dlp_GUI")
         self.geometry("600x240")
 
+        self.read_config()
         self.setup()
+
+    def read_config(self):
+        if not os.path.exists(self.ini_path):
+            with open(self.ini_path, "w") as f:
+                self.config["Directory"] = {}
+                self.config["Directory"]["lastdir"] = "./"
+                self.config.write(f)
+        self.config.read(self.ini_path, encoding="utf-8")
+
+    def write_config(self, section, key, value):
+        self.config.set(section, key, str(value))
+        with open(self.ini_path, "w") as f:
+            self.config.write(f)
 
     def setup(self):
         self.ent_url = ctk.CTkEntry(
-            self, width=400, placeholder_text="URL", font=self.fonts
+            self, width=400, placeholder_text="URL(空白ならタイトル)", font=self.fonts
         )
         self.ent_url.grid(row=0, column=0, padx=20, pady=10)
 
@@ -56,13 +75,39 @@ class App(ctk.CTk):
         self.ent_url.insert(0, clip_text)
 
     def savedir(self):
-        current_dir = os.path.abspath(os.path.dirname(__file__))
-        file_path = filedialog.askdirectory(initialdir=current_dir)
+        inidir = self.config["Directory"]["lastdir"]
+        file_path = filedialog.askdirectory(initialdir=inidir)
+        self.write_config("Directory", "lastdir", file_path)
         self.ent_savedir.delete(0, tk.END)
         self.ent_savedir.insert(0, file_path)
 
     def download(self):
-        messagebox.showinfo("ダウンロード", "まだ作ってないよ")
+        file_path = self.ent_savedir.get()
+        file_name = self.ent_filename.get()
+        url = self.ent_url.get()
+
+        if url == "":
+            messagebox.showerror("エラー", "URLを入力してください")
+            return
+        if file_path == "":
+            messagebox.showerror("エラー", "保存フォルダを指定してください")
+            return
+        if file_name == "":
+            file_name = "%(title)s"
+
+        self.opt["-o"] = '"' + file_path + "/" + file_name + ".%(ext)s" + '"'
+
+        cmd = ["yt-dlp"]
+        cmd.append(url)
+
+        for key, opt in self.opt.items():
+            cmd.append(key + " " + opt)
+
+        download = subprocess.Popen(" ".join(cmd), shell=True)
+        while download.poll() is None:
+            self.btn_download.configure(state="disabled")
+        self.btn_download.configure(state="normal")
+        messagebox.showinfo("完了", "ダウンロードが完了しました")
 
 
 app = App()
