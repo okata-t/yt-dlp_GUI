@@ -40,7 +40,7 @@ class App(ctk.CTk):
 
     def setup(self):
         self.ent_url = ctk.CTkEntry(
-            self, width=400, placeholder_text="URL(空白ならタイトル)", font=self.fonts
+            self, width=400, placeholder_text="URL", font=self.fonts
         )
         self.ent_url.grid(row=0, column=0, padx=20, pady=10)
 
@@ -60,7 +60,10 @@ class App(ctk.CTk):
         self.btn_savedir.grid(row=1, column=1, padx=20, pady=10)
 
         self.ent_filename = ctk.CTkEntry(
-            self, placeholder_text="保存ファイル名", width=400, font=self.fonts
+            self,
+            placeholder_text="保存ファイル名(空白ならタイトル)",
+            width=400,
+            font=self.fonts,
         )
         self.ent_filename.grid(row=2, column=0, padx=20, pady=10)
 
