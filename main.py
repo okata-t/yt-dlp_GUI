@@ -1,15 +1,14 @@
 import configparser
 import os
-import subprocess
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
 import pyperclip
+import yt_dlp
 
 
 class App(ctk.CTk):
-    opt = {"-f": '"bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]"'}
     config = configparser.ConfigParser()
     ini_path = "config.ini"
 
@@ -24,6 +23,10 @@ class App(ctk.CTk):
 
         self.read_config()
         self.setup()
+        self.opt = {
+            "progress_hooks": [self.hook],
+            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
+        }
 
     def read_config(self):
         if not os.path.exists(self.ini_path):
@@ -31,7 +34,7 @@ class App(ctk.CTk):
                 self.config["Directory"] = {}
                 self.config["Directory"]["lastdir"] = "./"
                 self.config.write(f)
-        self.config.read(self.ini_path, encoding="utf-8")
+        self.config.read(self.ini_path, encoding="shift-jis")
 
     def write_config(self, section, key, value):
         self.config.set(section, key, str(value))
@@ -85,6 +88,7 @@ class App(ctk.CTk):
         self.ent_savedir.insert(0, file_path)
 
     def download(self):
+        self.download_finished = 0
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
         url = self.ent_url.get()
@@ -98,19 +102,17 @@ class App(ctk.CTk):
         if file_name == "":
             file_name = "%(title)s"
 
-        self.opt["-o"] = '"' + file_path + "/" + file_name + ".%(ext)s" + '"'
+        self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
+        self.download_audio = False
 
-        cmd = ["yt-dlp"]
-        cmd.append(url)
+        with yt_dlp.YoutubeDL(self.opt) as ydl:
+            ydl.download([url])
 
-        for key, opt in self.opt.items():
-            cmd.append(key + " " + opt)
-
-        download = subprocess.Popen(" ".join(cmd), shell=True)
-        while download.poll() is None:
-            self.btn_download.configure(state="disabled")
-        self.btn_download.configure(state="normal")
-        messagebox.showinfo("完了", "ダウンロードが完了しました")
+    def hook(self, d):
+        if d["status"] == "finished":
+            self.download_finished += 1
+            if self.download_finished >= (1 if self.download_audio else 2):
+                messagebox.showinfo("完了", "ダウンロードが完了しました")
 
 
 app = App()
