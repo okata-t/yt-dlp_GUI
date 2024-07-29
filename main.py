@@ -2,6 +2,7 @@ import configparser
 import datetime
 import math
 import os
+import subprocess
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
@@ -9,6 +10,7 @@ from tkinter import filedialog, messagebox
 import customtkinter as ctk
 import pyperclip
 import yt_dlp
+from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 from win11toast import toast
 
 
@@ -23,15 +25,56 @@ class App(ctk.CTk):
         ctk.set_default_color_theme("blue")
         self.fonts = ("游ゴシック", 15)
         self.title("yt-dlp_GUI")
-        self.geometry("600x240")
+        self.geometry("600x300")
 
+        self.create_menu()
         self.read_config()
         self.setup()
+
         self.opt = {
             "progress_hooks": [self.progress_hook],
             "postprocessor_hooks": [self.postprocessor_hook],
             "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
         }
+
+        # メニューバーを追加
+
+    def create_menu(self):
+        menu = CTkMenuBar(self)
+        self.pack_propagate(0)
+        # File menu
+        file_menu = menu.add_cascade("開く")
+        file_dropdown = CustomDropdownMenu(file_menu)
+        file_dropdown.add_option(
+            "YouTubeを開く",
+            command=lambda: subprocess.run("start https://youtube.com", shell=True),
+        )
+        file_dropdown.add_separator()
+
+        # メニューバーのテンプレート
+        """
+        export_submenu = file_dropdown.add_submenu("Export As")
+        export_submenu.add_option(".TXT")
+        export_submenu.add_option(".PDF")
+
+        # Edit menu
+        edit_menu = menu.add_cascade("Edit")
+        edit_dropdown = CustomDropdownMenu(edit_menu)
+        edit_dropdown.add_option("Cut")
+        edit_dropdown.add_option("Copy")
+        edit_dropdown.add_option("Paste")
+
+        # Settings menu
+        settings_menu = menu.add_cascade("Settings")
+        settings_dropdown = CustomDropdownMenu(settings_menu)
+        settings_dropdown.add_option("Preferences")
+        settings_dropdown.add_option("Update")
+
+        # About menu
+        about_menu = menu.add_cascade("About")
+        about_dropdown = CustomDropdownMenu(about_menu)
+        about_dropdown.add_option("Hello World")
+        """
 
     def read_config(self):
         if not os.path.exists(self.ini_path):
@@ -49,7 +92,7 @@ class App(ctk.CTk):
     def setup(self):
 
         self.frame_main = ctk.CTkFrame(self, width=600)
-        self.frame_main.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.frame_main.grid(row=0, column=0, padx=10, pady=35, sticky="nsew")
 
         self.frame_progress = ctk.CTkFrame(self, width=600)
         self.frame_progress.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
