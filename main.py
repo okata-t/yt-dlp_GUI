@@ -2,6 +2,7 @@ import configparser
 import datetime
 import math
 import os
+import subprocess
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
@@ -9,10 +10,9 @@ from tkinter import filedialog, messagebox
 import customtkinter as ctk
 import pyperclip
 import yt_dlp
-from win11toast import toast
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
+from win11toast import toast
 
-import subprocess
 
 class App(ctk.CTk):
     config = configparser.ConfigParser()
@@ -37,17 +37,21 @@ class App(ctk.CTk):
             "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
         }
 
-        #メニューバーを追加
+        # メニューバーを追加
+
     def create_menu(self):
         menu = CTkMenuBar(self)
         self.pack_propagate(0)
         # File menu
         file_menu = menu.add_cascade("開く")
         file_dropdown = CustomDropdownMenu(file_menu)
-        file_dropdown.add_option("YouTubeを開く", command=lambda: subprocess.run("start https://youtube.com", shell=True))
+        file_dropdown.add_option(
+            "YouTubeを開く",
+            command=lambda: subprocess.run("start https://youtube.com", shell=True),
+        )
         file_dropdown.add_separator()
 
-        #メニューバーのテンプレート
+        # メニューバーのテンプレート
         """
         export_submenu = file_dropdown.add_submenu("Export As")
         export_submenu.add_option(".TXT")
@@ -86,7 +90,7 @@ class App(ctk.CTk):
             self.config.write(f)
 
     def setup(self):
-        
+
         self.frame_main = ctk.CTkFrame(self, width=600)
         self.frame_main.grid(row=0, column=0, padx=10, pady=35, sticky="nsew")
 
