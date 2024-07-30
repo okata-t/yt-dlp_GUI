@@ -212,9 +212,9 @@ class App(ctk.CTk):
     def savedir(self):
         inidir = self.config["Directory"]["lastdir"]
         file_path = filedialog.askdirectory(initialdir=inidir)
-        self.write_config("Directory", "lastdir", file_path)
         self.ent_savedir.delete(0, tk.END)
         self.ent_savedir.insert(0, file_path)
+        self.write_config("Directory", "lastdir", file_path)
 
     def start_download(self):
         self.opt = {
