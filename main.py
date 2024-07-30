@@ -33,12 +33,6 @@ class App(ctk.CTk):
         self.setup()
         self.load_option()
 
-        self.opt = {
-            "progress_hooks": [self.progress_hook],
-            "postprocessor_hooks": [self.postprocessor_hook],
-            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
-        }
-
         # メニューバーを追加
 
     def create_menu(self):
@@ -223,7 +217,12 @@ class App(ctk.CTk):
         self.ent_savedir.insert(0, file_path)
 
     def start_download(self):
-        self.opt["postprocessors"] = []
+        self.opt = {
+            "progress_hooks": [self.progress_hook],
+            "postprocessor_hooks": [self.postprocessor_hook],
+            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
+            "postprocessors": [],
+        }
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
         url = self.ent_url.get()
@@ -249,7 +248,6 @@ class App(ctk.CTk):
         if embed_thumbnail:
             self.opt["writethumbnail"] = True
             self.opt["postprocessors"].append({"key": "EmbedThumbnail"})
-
         self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
         self.download_finished = 1 if download_audio else 2
         self.thread = threading.Thread(target=self.download, args=(url,))
