@@ -18,29 +18,31 @@ from win11toast import toast
 
 
 class App(ctk.CTk):
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(interpolation=None)
     ini_path = "config.ini"
 
     def __init__(self):
         super().__init__()
 
+        ver = configparser.ConfigParser()
+        ver.read("version.ini", encoding="shift-jis")
+        this_version = ver["Version"]["version"]
+
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
         self.fonts = ("游ゴシック", 15)
-        self.title("yt-dlp_GUI")
-        self.geometry("800x300")
+        self.title("yt-dlp_GUI " + this_version)
+        self.geometry("900x300")
         self.iconbitmap("icon.ico")
 
         self.create_menu()
         self.read_config()
         self.setup()
         self.load_option()
-        self.check_version()
+        self.check_version(this_version)
 
-    def check_version(self):
-        ver = configparser.ConfigParser()
-        ver.read("version.ini", encoding="shift-jis")
-        this_version = ver["Version"]["version"]
+    def check_version(self, this_version):
+
         r = requests.get(
             "https://api.github.com/repos/okata-t/yt-dlp_GUI/releases/latest"
         )
@@ -68,7 +70,8 @@ class App(ctk.CTk):
                     + "download/yt-dlp_GUI_Setup.exe",
                     shell=True,
                 )
-        # メニューバーを追加
+
+    # メニューバーを追加
 
     def create_menu(self):
         menu = CTkMenuBar.CTkMenuBar(self)
@@ -112,14 +115,15 @@ class App(ctk.CTk):
             self.init_config()
         self.config.read(self.ini_path, encoding="shift-jis")
 
-    def write_config(self, section, key, value):
-        self.config.set(section, key, str(value))
+    def write_config(self):
         with open(self.ini_path, "w") as f:
+            self.config["Directory"]["lastdir"] = self.ent_savedir.get()
+            self.config["Directory"]["filename"] = self.ent_filename.get()
+            self.config["Option"] = {}
+            self.config["Option"]["download_audio"] = str(self.chk_audio.get())
+            self.config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
             self.config.write(f)
-
-    def set_option(self):
-        self.write_config("Option", "download_audio", self.chk_audio.get())
-        self.write_config("Option", "embed_thumbnail", self.chk_thumbnail.get())
+        self.destroy()
 
     def load_option(self):
         self.var_chk_audio.set(self.config["Option"]["download_audio"])
@@ -129,13 +133,14 @@ class App(ctk.CTk):
         with open(self.ini_path, "w") as f:
             self.config["Directory"] = {}
             self.config["Directory"]["lastdir"] = ""
+            self.config["Directory"]["filename"] = ""
             self.config["Option"] = {}
             self.config["Option"]["download_audio"] = "0"
             self.config["Option"]["embed_thumbnail"] = "0"
             self.config.write(f)
 
     def setup(self):
-
+        self.toplevel_window = None
         self.frame_main = ctk.CTkFrame(self, width=540)
         self.frame_main.grid(row=0, column=0, padx=10, pady=35, sticky="nsew")
 
@@ -149,13 +154,13 @@ class App(ctk.CTk):
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
-        self.frame_main.columnconfigure(0, weight=1)
+        self.frame_main.columnconfigure(1, weight=1)
         self.frame_progress.columnconfigure(0, weight=1)
 
         self.ent_url = ctk.CTkEntry(
             self.frame_main, width=400, placeholder_text="URL", font=self.fonts
         )
-        self.ent_url.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+        self.ent_url.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
         self.btn_paste = ctk.CTkButton(
             self.frame_main,
@@ -166,7 +171,7 @@ class App(ctk.CTk):
         )
         self.btn_paste.grid(
             row=0,
-            column=1,
+            column=2,
             padx=10,
             pady=10,
         )
@@ -177,7 +182,9 @@ class App(ctk.CTk):
             placeholder_text="保存先フォルダ",
             font=self.fonts,
         )
-        self.ent_savedir.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
+        self.ent_savedir.grid(
+            row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew"
+        )
         if self.config["Directory"]["lastdir"] != "":
             self.ent_savedir.insert(0, self.config["Directory"]["lastdir"])
 
@@ -188,15 +195,33 @@ class App(ctk.CTk):
             command=self.savedir,
             font=self.fonts,
         )
-        self.btn_savedir.grid(row=1, column=1, padx=10, pady=10)
+        self.btn_savedir.grid(row=1, column=2, padx=10, pady=10)
+
+        self.btn_editname = ctk.CTkButton(
+            self.frame_main,
+            width=10,
+            text="編集",
+            font=self.fonts,
+            fg_color="transparent",
+            border_width=1,
+            command=self.edit_filename,
+        )
+        self.btn_editname.grid(
+            row=2,
+            column=0,
+            padx=10,
+            pady=10,
+        )
 
         self.ent_filename = ctk.CTkEntry(
             self.frame_main,
             placeholder_text="保存ファイル名(空白ならタイトル)",
-            width=400,
+            width=340,
             font=self.fonts,
         )
-        self.ent_filename.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+        self.ent_filename.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+        if self.config["Directory"]["filename"] != "":
+            self.ent_filename.insert(0, self.config["Directory"]["filename"])
 
         self.btn_download = ctk.CTkButton(
             self.frame_main,
@@ -205,7 +230,7 @@ class App(ctk.CTk):
             command=self.start_download,
             font=self.fonts,
         )
-        self.btn_download.grid(row=2, column=1, padx=10, pady=10)
+        self.btn_download.grid(row=2, column=2, padx=10, pady=10)
 
         self.lbl_progress = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
         self.lbl_progress.grid(row=0, column=0, padx=10, sticky="w")
@@ -225,7 +250,6 @@ class App(ctk.CTk):
             text="音声のみダウンロード",
             font=self.fonts,
             variable=self.var_chk_audio,
-            command=self.set_option,
         )
         self.chk_audio.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
@@ -235,7 +259,6 @@ class App(ctk.CTk):
             text="サムネイルを埋め込む",
             font=self.fonts,
             variable=self.var_chk_thumbnail,
-            command=self.set_option,
         )
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
@@ -249,7 +272,6 @@ class App(ctk.CTk):
         file_path = filedialog.askdirectory(initialdir=inidir)
         self.ent_savedir.delete(0, tk.END)
         self.ent_savedir.insert(0, file_path)
-        self.write_config("Directory", "lastdir", file_path)
 
     def start_download(self):
         self.opt = {
@@ -257,6 +279,7 @@ class App(ctk.CTk):
             "postprocessor_hooks": [self.postprocessor_hook],
             "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
             "postprocessors": [],
+            "ignoreerrors": True,
         }
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
@@ -363,6 +386,114 @@ class App(ctk.CTk):
                 self.lbl_eta.configure(text="")
                 toast("yt-dlp_GUI", "ダウンロードが完了しました")
 
+    def edit_filename(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = EditFilename(self)
+        else:
+            self.toplevel_window.focus()
+
+
+class EditFilename(ctk.CTkToplevel):
+    def __init__(self, master):
+        super().__init__(master)
+        self.fonts = ("游ゴシック", 15)
+        self.title("ファイル名テンプレートの編集")
+        self.geometry("740x240")
+        self.after(100, self.focus)
+
+        self.dict = {
+            "ID": "id",
+            "タイトル": "title",
+            "URL": "url",
+            "投稿者": "uploader",
+            "投稿者ID": "uploader_id",
+            "投稿日": "upload_date",
+            "動画サイズ縦": "width",
+            "動画サイズ横": "height",
+            "サイトドメイン": "extractor",
+            "プレイリスト名": "playlist",
+            "プレイリスト内番号": "playlist_index",
+        }
+
+        self.frame_entry = ctk.CTkFrame(self)
+        self.frame_entry.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.frame_option = ctk.CTkFrame(self, width=600)
+        self.frame_option.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
+        self.frame_entry.columnconfigure(0, weight=1)
+
+        self.entry = ctk.CTkEntry(self.frame_entry, font=self.fonts)
+        self.entry.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        self.load_text()
+
+        self.apply = ctk.CTkButton(
+            self.frame_entry,
+            font=self.fonts,
+            text="適用",
+            width=30,
+            command=self.apply_text,
+        )
+        self.apply.grid(row=0, column=1, padx=10, pady=10)
+
+        self.btn = [
+            [
+                ctk.CTkButton(
+                    self.frame_option,
+                    font=self.fonts,
+                    width=160,
+                    fg_color="transparent",
+                )
+                for i in range(5)
+            ]
+            for j in range(4)
+        ]
+
+        self.btn[0][0] = self.make_btn(0, 0, "ID")
+        self.btn[0][1] = self.make_btn(0, 1, "タイトル")
+        self.btn[0][2] = self.make_btn(0, 2, "投稿者")
+        self.btn[0][3] = self.make_btn(0, 3, "投稿者ID")
+        self.btn[1][0] = self.make_btn(1, 0, "投稿日")
+        self.btn[1][1] = self.make_btn(1, 1, "動画サイズ縦")
+        self.btn[1][2] = self.make_btn(1, 2, "動画サイズ横")
+        self.btn[1][3] = self.make_btn(1, 3, "FPS")
+        self.btn[2][0] = self.make_btn(2, 0, "サイトドメイン")
+        self.btn[2][1] = self.make_btn(2, 1, "プレイリスト名")
+        self.btn[2][2] = self.make_btn(2, 2, "プレイリスト内番号")
+        self.btn[2][3].configure(
+            command=lambda: self.entry.delete(0, ctk.END), text="クリア"
+        )
+        self.btn[2][3].grid(row=2, column=3, padx=10, pady=10, sticky="nsew")
+
+        for r in range(3):
+            self.frame_option.rowconfigure(r, weight=1)
+        for c in range(4):
+            self.frame_option.columnconfigure(c, weight=1)
+
+    def make_btn(self, r, c, text):
+        self.btn[r][c].configure(
+            command=lambda: self.entry.insert(ctk.END, '"' + text + '"'),
+            text=text,
+        )
+        self.btn[r][c].grid(row=r, column=c, padx=10, pady=10, sticky="nsew")
+
+    def apply_text(self):
+        text = self.entry.get()
+        for key in self.dict.keys():
+            text = text.replace('"' + key + '"', "%(" + self.dict[key] + ")s")
+        app.ent_filename.delete(0, tk.END)
+        app.ent_filename.insert(0, text)
+        self.destroy()
+
+    def load_text(self):
+        text = app.ent_filename.get()
+        for key in self.dict.keys():
+            text = text.replace("%(" + self.dict[key] + ")s", '"' + key + '"')
+        self.entry.delete(0, tk.END)
+        self.entry.insert(0, text)
+
 
 app = App()
+app.protocol("WM_DELETE_WINDOW", app.write_config)
 app.mainloop()
