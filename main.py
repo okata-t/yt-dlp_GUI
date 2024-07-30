@@ -30,6 +30,7 @@ class App(ctk.CTk):
         self.create_menu()
         self.read_config()
         self.setup()
+        self.load_option()
 
         self.opt = {
             "progress_hooks": [self.progress_hook],
@@ -80,6 +81,7 @@ class App(ctk.CTk):
         if not os.path.exists(self.ini_path):
             with open(self.ini_path, "w") as f:
                 self.config["Directory"] = {}
+                self.config["Option"] = {}
                 self.config["Directory"]["lastdir"] = ""
                 self.config.write(f)
         self.config.read(self.ini_path, encoding="shift-jis")
@@ -88,6 +90,14 @@ class App(ctk.CTk):
         self.config.set(section, key, str(value))
         with open(self.ini_path, "w") as f:
             self.config.write(f)
+
+    def set_option(self):
+        self.write_config("Option", "download_audio", self.chk_audio.get())
+        self.write_config("Option", "embed_thumbnail", self.chk_thumbnail.get())
+
+    def load_option(self):
+        self.var_chk_audio.set(self.config["Option"]["download_audio"])
+        self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
 
     def setup(self):
 
@@ -175,13 +185,23 @@ class App(ctk.CTk):
         )
         self.pbar_progress.set(0)
 
+        self.var_chk_audio = ctk.BooleanVar()
         self.chk_audio = ctk.CTkCheckBox(
-            self.frame_option, text="音声のみダウンロード", font=self.fonts
+            self.frame_option,
+            text="音声のみダウンロード",
+            font=self.fonts,
+            variable=self.var_chk_audio,
+            command=self.set_option,
         )
         self.chk_audio.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
+        self.var_chk_thumbnail = ctk.BooleanVar()
         self.chk_thumbnail = ctk.CTkCheckBox(
-            self.frame_option, text="サムネイルを埋め込む", font=self.fonts
+            self.frame_option,
+            text="サムネイルを埋め込む",
+            font=self.fonts,
+            variable=self.var_chk_thumbnail,
+            command=self.set_option,
         )
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
