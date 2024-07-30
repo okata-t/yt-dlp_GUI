@@ -5,12 +5,15 @@ import os
 import subprocess
 import threading
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog
 
 import CTkMenuBar
+import CTkMessagebox
 import customtkinter as ctk
 import pyperclip
+import requests
 import yt_dlp
+from packaging import version
 from win11toast import toast
 
 
@@ -32,7 +35,39 @@ class App(ctk.CTk):
         self.read_config()
         self.setup()
         self.load_option()
+        self.check_version()
 
+    def check_version(self):
+        ver = configparser.ConfigParser()
+        ver.read("version.ini", encoding="shift-jis")
+        this_version = self.ver["Version"]["version"]
+        r = requests.get(
+            "https://api.github.com/repos/okata-t/yt-dlp_GUI/releases/latest"
+        )
+        latest_version = r.json()["tag_name"]
+        if version.parse(this_version) < version.parse(latest_version):
+            msg = CTkMessagebox.CTkMessagebox(
+                title="アップデート",
+                message="新しいバージョン「"
+                + latest_version
+                + "」が公開されました。ダウンロードしますか？",
+                icon="info",
+                font=self.fonts,
+                option_1="キャンセル",
+                option_2="ダウンロード",
+                option_3="GitHubへ",
+            )
+            if msg.get() == "GitHubへ":
+                subprocess.run(
+                    "start https://github.com/okata-t/yt-dlp_GUI/releases/latest",
+                    shell=True,
+                )
+            elif msg.get() == "ダウンロード":
+                subprocess.run(
+                    "start https://github.com/okata-t/yt-dlp_GUI/releases/latest/"
+                    + "download/yt-dlp_GUI_Setup.exe",
+                    shell=True,
+                )
         # メニューバーを追加
 
     def create_menu(self):
@@ -228,10 +263,20 @@ class App(ctk.CTk):
         url = self.ent_url.get()
 
         if url == "":
-            messagebox.showerror("エラー", "URLを入力してください")
+            CTkMessagebox.CTkMessagebox(
+                title="エラー",
+                message="URLを入力してください",
+                icon="cancel",
+                font=self.fonts,
+            )
             return
         if file_path == "":
-            messagebox.showerror("エラー", "保存フォルダを指定してください")
+            CTkMessagebox.CTkMessagebox(
+                title="エラー",
+                message="保存フォルダを指定してください",
+                icon="cancel",
+                font=self.fonts,
+            )
             return
         if file_name == "":
             file_name = "%(title)s"
