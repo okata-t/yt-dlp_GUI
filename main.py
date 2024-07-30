@@ -40,7 +40,7 @@ class App(ctk.CTk):
     def check_version(self):
         ver = configparser.ConfigParser()
         ver.read("version.ini", encoding="shift-jis")
-        this_version = self.ver["Version"]["version"]
+        this_version = ver["Version"]["version"]
         r = requests.get(
             "https://api.github.com/repos/okata-t/yt-dlp_GUI/releases/latest"
         )
@@ -48,9 +48,9 @@ class App(ctk.CTk):
         if version.parse(this_version) < version.parse(latest_version):
             msg = CTkMessagebox.CTkMessagebox(
                 title="アップデート",
-                message="新しいバージョン「"
+                message="新しいバージョン："
                 + latest_version
-                + "」が公開されました。ダウンロードしますか？",
+                + "\nが公開されました。\nダウンロードしますか？",
                 icon="info",
                 font=self.fonts,
                 option_1="キャンセル",
