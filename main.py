@@ -79,11 +79,7 @@ class App(ctk.CTk):
 
     def read_config(self):
         if not os.path.exists(self.ini_path):
-            with open(self.ini_path, "w") as f:
-                self.config["Directory"] = {}
-                self.config["Option"] = {}
-                self.config["Directory"]["lastdir"] = ""
-                self.config.write(f)
+            self.init_config()
         self.config.read(self.ini_path, encoding="shift-jis")
 
     def write_config(self, section, key, value):
@@ -98,6 +94,15 @@ class App(ctk.CTk):
     def load_option(self):
         self.var_chk_audio.set(self.config["Option"]["download_audio"])
         self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
+
+    def init_config(self):
+        with open(self.ini_path, "w") as f:
+            self.config["Directory"] = {}
+            self.config["Directory"]["lastdir"] = ""
+            self.config["Option"] = {}
+            self.config["Option"]["download_audio"] = "0"
+            self.config["Option"]["embed_thumbnail"] = "0"
+            self.config.write(f)
 
     def setup(self):
 
