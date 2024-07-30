@@ -163,11 +163,6 @@ class App(ctk.CTk):
         )
         self.btn_download.grid(row=2, column=1, padx=10, pady=10)
 
-        self.chk_audio = ctk.CTkCheckBox(
-            self.frame_option, text="音声のみダウンロード", font=self.fonts
-        )
-        self.chk_audio.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-
         self.lbl_progress = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
         self.lbl_progress.grid(row=0, column=0, padx=10, sticky="w")
 
@@ -179,6 +174,16 @@ class App(ctk.CTk):
             row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew"
         )
         self.pbar_progress.set(0)
+
+        self.chk_audio = ctk.CTkCheckBox(
+            self.frame_option, text="音声のみダウンロード", font=self.fonts
+        )
+        self.chk_audio.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
+        self.chk_thumbnail = ctk.CTkCheckBox(
+            self.frame_option, text="サムネイルを埋め込む", font=self.fonts
+        )
+        self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
     def paste(self):
         clip_text = pyperclip.paste()
@@ -193,6 +198,7 @@ class App(ctk.CTk):
         self.ent_savedir.insert(0, file_path)
 
     def start_download(self):
+        self.opt["postprocessors"] = []
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
         url = self.ent_url.get()
@@ -207,15 +213,17 @@ class App(ctk.CTk):
             file_name = "%(title)s"
 
         download_audio = self.chk_audio.get()
+        embed_thumbnail = self.chk_thumbnail.get()
 
         if download_audio:
-            self.opt["postprocessors"] = [
-                {
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "mp3",
-                }
-            ]
+            self.opt["postprocessors"].append(
+                {"key": "FFmpegExtractAudio", "preferredcodec": "mp3"}
+            )
             self.opt["format"] = "bestaudio/best"
+
+        if embed_thumbnail:
+            self.opt["writethumbnail"] = True
+            self.opt["postprocessors"].append({"key": "EmbedThumbnail"})
 
         self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
         self.download_finished = 1 if download_audio else 2
