@@ -410,6 +410,7 @@ class EditFilename(ctk.CTkToplevel):
             "投稿日": "upload_date",
             "動画サイズ縦": "width",
             "動画サイズ横": "height",
+            "FPS": "fps",
             "サイトドメイン": "extractor",
             "プレイリスト名": "playlist",
             "プレイリスト内番号": "playlist_index",
