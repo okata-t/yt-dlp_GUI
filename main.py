@@ -7,10 +7,10 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
+import CTkMenuBar
 import customtkinter as ctk
 import pyperclip
 import yt_dlp
-from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 from win11toast import toast
 
 
@@ -25,7 +25,7 @@ class App(ctk.CTk):
         ctk.set_default_color_theme("blue")
         self.fonts = ("游ゴシック", 15)
         self.title("yt-dlp_GUI")
-        self.geometry("600x300")
+        self.geometry("800x300")
 
         self.create_menu()
         self.read_config()
@@ -40,11 +40,11 @@ class App(ctk.CTk):
         # メニューバーを追加
 
     def create_menu(self):
-        menu = CTkMenuBar(self)
+        menu = CTkMenuBar.CTkMenuBar(self)
         self.pack_propagate(0)
         # File menu
         file_menu = menu.add_cascade("開く")
-        file_dropdown = CustomDropdownMenu(file_menu)
+        file_dropdown = CTkMenuBar.CustomDropdownMenu(file_menu, font=self.fonts)
         file_dropdown.add_option(
             "YouTubeを開く",
             command=lambda: subprocess.run("start https://youtube.com", shell=True),
@@ -91,16 +91,27 @@ class App(ctk.CTk):
 
     def setup(self):
 
-        self.frame_main = ctk.CTkFrame(self, width=600)
+        self.frame_main = ctk.CTkFrame(self, width=540)
         self.frame_main.grid(row=0, column=0, padx=10, pady=35, sticky="nsew")
 
-        self.frame_progress = ctk.CTkFrame(self, width=600)
-        self.frame_progress.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        self.frame_option = ctk.CTkFrame(self, width=360)
+        self.frame_option.grid(row=0, column=1, padx=10, pady=35, sticky="nsew")
+
+        self.frame_progress = ctk.CTkFrame(self, width=920)
+        self.frame_progress.grid(
+            row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew"
+        )
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.frame_main.columnconfigure(0, weight=1)
+
+        self.frame_progress.columnconfigure(0, weight=1)
 
         self.ent_url = ctk.CTkEntry(
             self.frame_main, width=400, placeholder_text="URL", font=self.fonts
         )
-        self.ent_url.grid(row=0, column=0, padx=20, pady=10)
+        self.ent_url.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
         self.btn_paste = ctk.CTkButton(
             self.frame_main,
@@ -109,7 +120,12 @@ class App(ctk.CTk):
             command=self.paste,
             font=self.fonts,
         )
-        self.btn_paste.grid(row=0, column=1, padx=20, pady=10)
+        self.btn_paste.grid(
+            row=0,
+            column=1,
+            padx=10,
+            pady=10,
+        )
 
         self.ent_savedir = ctk.CTkEntry(
             self.frame_main,
@@ -117,7 +133,7 @@ class App(ctk.CTk):
             placeholder_text="保存先フォルダ",
             font=self.fonts,
         )
-        self.ent_savedir.grid(row=1, column=0, padx=20, pady=10)
+        self.ent_savedir.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
         if self.config["Directory"]["lastdir"] != "":
             self.ent_savedir.insert(0, self.config["Directory"]["lastdir"])
 
@@ -128,7 +144,7 @@ class App(ctk.CTk):
             command=self.savedir,
             font=self.fonts,
         )
-        self.btn_savedir.grid(row=1, column=1, padx=20, pady=10)
+        self.btn_savedir.grid(row=1, column=1, padx=10, pady=10)
 
         self.ent_filename = ctk.CTkEntry(
             self.frame_main,
@@ -136,7 +152,7 @@ class App(ctk.CTk):
             width=400,
             font=self.fonts,
         )
-        self.ent_filename.grid(row=2, column=0, padx=20, pady=10)
+        self.ent_filename.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
 
         self.btn_download = ctk.CTkButton(
             self.frame_main,
@@ -145,7 +161,12 @@ class App(ctk.CTk):
             command=self.start_download,
             font=self.fonts,
         )
-        self.btn_download.grid(row=2, column=1, padx=20, pady=10)
+        self.btn_download.grid(row=2, column=1, padx=10, pady=10)
+
+        self.chk_audio = ctk.CTkCheckBox(
+            self.frame_option, text="音声のみダウンロード", font=self.fonts
+        )
+        self.chk_audio.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         self.lbl_progress = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
         self.lbl_progress.grid(row=0, column=0, padx=10, sticky="w")
@@ -153,9 +174,9 @@ class App(ctk.CTk):
         self.lbl_eta = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
         self.lbl_eta.grid(row=0, column=1, padx=10, sticky="e")
 
-        self.pbar_progress = ctk.CTkProgressBar(self.frame_progress, width=560)
+        self.pbar_progress = ctk.CTkProgressBar(self.frame_progress, width=920)
         self.pbar_progress.grid(
-            row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew"
+            row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew"
         )
         self.pbar_progress.set(0)
 
@@ -185,13 +206,24 @@ class App(ctk.CTk):
         if file_name == "":
             file_name = "%(title)s"
 
+        download_audio = self.chk_audio.get()
+
+        if download_audio:
+            self.opt["postprocessors"] = [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                }
+            ]
+            self.opt["format"] = "bestaudio/best"
+
         self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
-        self.download_audio = False
-        self.download_finished = 1 if self.download_audio else 2
+        self.download_finished = 1 if download_audio else 2
         self.thread = threading.Thread(target=self.download, args=(url,))
         self.thread.start()
 
     def download(self, url):
+        self.pbar_progress.set(0)
         self.lbl_progress.configure(text="準備中")
         self.lbl_eta.configure(text="")
         with yt_dlp.YoutubeDL(self.opt) as ydl:
