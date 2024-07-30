@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 config.ini
 ffmpeg.exe
+icon.png
+icon.ico

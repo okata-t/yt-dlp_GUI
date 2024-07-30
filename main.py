@@ -26,6 +26,7 @@ class App(ctk.CTk):
         self.fonts = ("游ゴシック", 15)
         self.title("yt-dlp_GUI")
         self.geometry("800x300")
+        self.iconbitmap("icon.ico")
 
         self.create_menu()
         self.read_config()
@@ -120,7 +121,6 @@ class App(ctk.CTk):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.frame_main.columnconfigure(0, weight=1)
-
         self.frame_progress.columnconfigure(0, weight=1)
 
         self.ent_url = ctk.CTkEntry(
