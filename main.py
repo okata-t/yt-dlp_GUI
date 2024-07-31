@@ -21,6 +21,7 @@ from win11toast import toast
 
 class App(ctk.CTk):
     config = configparser.ConfigParser(interpolation=None)
+    ini_path = "config.ini"
 
     def __init__(self):
         super().__init__()
@@ -37,7 +38,6 @@ class App(ctk.CTk):
         self.title("yt-dlp_GUI " + this_version)
         self.geometry("900x300")
         self.iconbitmap("icon.ico")
-        self.ini_path = "config.ini"
 
         self.create_menu()
         self.read_config()
