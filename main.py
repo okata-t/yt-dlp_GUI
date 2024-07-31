@@ -21,7 +21,6 @@ from win11toast import toast
 
 class App(ctk.CTk):
     config = configparser.ConfigParser(interpolation=None)
-    ini_path = "config.ini"
 
     def __init__(self):
         super().__init__()
@@ -38,6 +37,7 @@ class App(ctk.CTk):
         self.title("yt-dlp_GUI " + this_version)
         self.geometry("900x300")
         self.iconbitmap("icon.ico")
+        self.ini_path = "config.ini"
 
         self.create_menu()
         self.read_config()
@@ -146,9 +146,16 @@ class App(ctk.CTk):
         self.destroy()
 
     def load_option(self):
-        self.var_chk_audio.set(self.config["Option"]["download_audio"])
-        self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
-        self.audio_extension.set(self.config["Option"]["audio_extension"])
+        try:
+            self.var_chk_audio.set(self.config["Option"]["download_audio"])
+            self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
+            self.audio_extension.set(self.config["Option"]["audio_extension"])
+        except KeyError as error_message:
+            a = str(error_message)
+            with open(self.ini_path, "w") as f:
+                self.config["Option"][a[1:-1]] = ""
+                self.config.write(f)
+
 
     def init_config(self):
         with open(self.ini_path, "w") as f:
