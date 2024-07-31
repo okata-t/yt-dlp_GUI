@@ -2,6 +2,7 @@ import configparser
 import datetime
 import math
 import os
+import sys
 import subprocess
 import threading
 import tkinter as tk
@@ -10,6 +11,7 @@ from tkinter import filedialog
 import CTkMenuBar
 import CTkMessagebox
 import customtkinter as ctk
+import darkdetect
 import pyperclip
 import requests
 import yt_dlp
@@ -23,6 +25,8 @@ class App(ctk.CTk):
 
     def __init__(self):
         super().__init__()
+
+        self.color_mode = darkdetect.theme()
 
         ver = configparser.ConfigParser()
         ver.read("version.ini", encoding="shift-jis")
@@ -70,18 +74,30 @@ class App(ctk.CTk):
                     + "download/yt-dlp_GUI_Setup.exe",
                     shell=True,
                 )
+            sys.exit()
+
+    def uninstall(self):
+        subprocess.run("start unins000.exe", shell=True)
+        sys.exit()
 
     # メニューバーを追加
-
     def create_menu(self):
-        menu = CTkMenuBar.CTkMenuBar(self)
+        if self.color_mode == "Dark":
+            self.color = "#242424"
+        else:
+            self.color = "#EBEBEB"
+        menu = CTkMenuBar.CTkMenuBar(self, bg_color=self.color)
         self.pack_propagate(0)
         # File menu
-        file_menu = menu.add_cascade("開く")
+        file_menu = menu.add_cascade("オプション", font=self.fonts)
         file_dropdown = CTkMenuBar.CustomDropdownMenu(file_menu, font=self.fonts)
         file_dropdown.add_option(
             "YouTubeを開く",
             command=lambda: subprocess.run("start https://youtube.com", shell=True),
+        )
+        file_dropdown.add_option(
+            "アンインストール",
+            command=lambda: self.uninstall(),
         )
         file_dropdown.add_separator()
 
