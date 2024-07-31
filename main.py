@@ -2,8 +2,8 @@ import configparser
 import datetime
 import math
 import os
-import sys
 import subprocess
+import sys
 import threading
 import tkinter as tk
 from tkinter import filedialog
@@ -45,6 +45,7 @@ class App(ctk.CTk):
         self.load_option()
         self.check_version(this_version)
         self.audio_selected()
+        self.audio_extension_selected(self.config["Option"]["audio_extension"])
 
     def check_version(self, this_version):
 
@@ -156,7 +157,6 @@ class App(ctk.CTk):
                 self.config["Option"][a[1:-1]] = ""
                 self.config.write(f)
 
-
     def init_config(self):
         with open(self.ini_path, "w") as f:
             self.config["Directory"] = {}
@@ -171,14 +171,15 @@ class App(ctk.CTk):
     def audio_selected(self):
         if self.var_chk_audio.get():
             self.audio_extension.configure(state="normal")
-            self.var_chk_thumbnail.set("False")
         else:
             self.audio_extension.configure(state="disabled")
 
-    def thumbnail_selected(self):
-        if self.var_chk_thumbnail.get():
-            self.var_chk_audio.set("False")
-            self.audio_extension.configure(state="disabled")
+    def audio_extension_selected(self, audio):
+        if audio == "wav":
+            self.var_chk_thumbnail.set(False)
+            self.chk_thumbnail.configure(state="disabled")
+        else:
+            self.chk_thumbnail.configure(state="normal")
 
     def setup(self):
         self.toplevel_window = None
@@ -300,19 +301,18 @@ class App(ctk.CTk):
             self.frame_option,
             text="サムネイルを埋め込む",
             font=self.fonts,
-            command=self.thumbnail_selected,
             variable=self.var_chk_thumbnail,
         )
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
         dict_file = ["mp3", "wav", "m4a", "opus"]
 
-        self.var_chk_file = ctk.BooleanVar()
         self.audio_extension = ctk.CTkComboBox(
             self.frame_option,
             values=list(dict_file),
             font=self.fonts,
-            width=100
+            width=100,
+            command=self.audio_extension_selected,
         )
         self.audio_extension.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
@@ -363,7 +363,10 @@ class App(ctk.CTk):
 
         if download_audio:
             self.opt["postprocessors"].append(
-                {"key": "FFmpegExtractAudio", "preferredcodec": self.audio_extension.get()}
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": self.audio_extension.get(),
+                }
             )
             self.opt["format"] = "bestaudio/best"
 
