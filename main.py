@@ -78,8 +78,9 @@ class App(ctk.CTk):
                 sys.exit()
 
     def uninstall(self):
-        subprocess.run("start unins000.exe", shell=True)
-        sys.exit()
+        cp = subprocess.run("start unins000.exe", shell=True)
+        if cp.returncode == 0:
+            sys.exit()
 
     # メニューバーを追加
     def create_menu(self):
