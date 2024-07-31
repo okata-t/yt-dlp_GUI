@@ -68,13 +68,14 @@ class App(ctk.CTk):
                     "start https://github.com/okata-t/yt-dlp_GUI/releases/latest",
                     shell=True,
                 )
+                sys.exit()
             elif msg.get() == "ダウンロード":
                 subprocess.run(
                     "start https://github.com/okata-t/yt-dlp_GUI/releases/latest/"
                     + "download/yt-dlp_GUI_Setup.exe",
                     shell=True,
                 )
-            sys.exit()
+                sys.exit()
 
     def uninstall(self):
         subprocess.run("start unins000.exe", shell=True)
