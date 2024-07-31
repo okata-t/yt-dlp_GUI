@@ -18,6 +18,9 @@ import yt_dlp
 from packaging import version
 from win11toast import toast
 
+import requests
+from bs4 import BeautifulSoup
+
 
 class App(ctk.CTk):
     config = configparser.ConfigParser(interpolation=None)
@@ -26,13 +29,14 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.color_mode = darkdetect.theme()
+        #Windowsのテーマ色設定。"Light" or "Dark"
+        self.color_mode = "Light" #darkdetect.theme()
 
         ver = configparser.ConfigParser()
         ver.read("version.ini", encoding="shift-jis")
         this_version = ver["Version"]["version"]
 
-        ctk.set_appearance_mode("System")
+        ctk.set_appearance_mode(self.color_mode)
         ctk.set_default_color_theme("blue")
         self.fonts = ("游ゴシック", 15)
         self.title("yt-dlp_GUI " + this_version)
@@ -48,11 +52,19 @@ class App(ctk.CTk):
         self.audio_extension_selected(self.config["Option"]["audio_extension"])
 
     def check_version(self, this_version):
-
         r = requests.get(
             "https://api.github.com/repos/okata-t/yt-dlp_GUI/releases/latest"
         )
-        latest_version = r.json()["tag_name"]
+
+        #API呼び出し上限の場合、スクレイピングしてバージョンを取得
+        try:
+            latest_version = r.json()["tag_name"]
+        except KeyError:
+            url = "https://github.com/okata-t/yt-dlp_GUI/releases/latest"
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, "html.parser")
+            latest_version = soup.find(class_="d-inline mr-3").text[11:]
+
         if version.parse(this_version) < version.parse(latest_version):
             msg = CTkMessagebox.CTkMessagebox(
                 title="アップデート",
@@ -87,10 +99,12 @@ class App(ctk.CTk):
     # メニューバーを追加
     def create_menu(self):
         if self.color_mode == "Dark":
-            self.color = "#242424"
+            self.color_menubar = "#242424"
+            self.color_edit = "#EBEBEB"
         else:
-            self.color = "#EBEBEB"
-        menu = CTkMenuBar.CTkMenuBar(self, bg_color=self.color)
+            self.color_menubar = "#EBEBEB"
+            self.color_edit = "#242424"
+        menu = CTkMenuBar.CTkMenuBar(self, bg_color=self.color_menubar)
         self.pack_propagate(0)
         # File menu
         file_menu = menu.add_cascade("オプション", font=self.fonts)
@@ -158,9 +172,13 @@ class App(ctk.CTk):
                 self.config.write(f)
 
     def init_config(self):
+        #Downloadsフォルダのパスを取得
+        user_folder = os.path.expanduser("~")
+        download_path = os.path.join(user_folder, "Downloads")
+
         with open(self.ini_path, "w") as f:
             self.config["Directory"] = {}
-            self.config["Directory"]["lastdir"] = ""
+            self.config["Directory"]["lastdir"] = download_path
             self.config["Directory"]["filename"] = ""
             self.config["Option"] = {}
             self.config["Option"]["download_audio"] = "0"
@@ -171,13 +189,17 @@ class App(ctk.CTk):
     def audio_selected(self):
         if self.var_chk_audio.get():
             self.audio_extension.configure(state="normal")
+            if self.audio_extension.get() == "wav":
+                self.chk_thumbnail.configure(state="disabled")
         else:
             self.audio_extension.configure(state="disabled")
+            self.chk_thumbnail.configure(state="normal")
 
     def audio_extension_selected(self, audio):
         if audio == "wav":
-            self.var_chk_thumbnail.set(False)
-            self.chk_thumbnail.configure(state="disabled")
+            if self.var_chk_audio.get():
+                self.var_chk_thumbnail.set(False)
+                self.chk_thumbnail.configure(state="disabled")
         else:
             self.chk_thumbnail.configure(state="normal")
 
@@ -244,8 +266,9 @@ class App(ctk.CTk):
             width=10,
             text="編集",
             font=self.fonts,
+            text_color=self.color_edit,
             fg_color="transparent",
-            border_width=1,
+            border_width=2.5,
             command=self.edit_filename,
         )
         self.btn_editname.grid(
