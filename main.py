@@ -164,8 +164,13 @@ class App(ctk.CTk):
     def audio_selected(self):
         if self.var_chk_audio.get():
             self.audio_extension.configure(state="normal")
+            self.var_chk_thumbnail.set("False")
         else:
             self.audio_extension.configure(state="disabled")
+
+    def thumbnail_selected(self):
+        if self.var_chk_thumbnail.get():
+            self.var_chk_audio.set("False")
 
     def setup(self):
         self.toplevel_window = None
@@ -287,6 +292,7 @@ class App(ctk.CTk):
             self.frame_option,
             text="サムネイルを埋め込む",
             font=self.fonts,
+            command=self.thumbnail_selected,
             variable=self.var_chk_thumbnail,
         )
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
