@@ -178,6 +178,7 @@ class App(ctk.CTk):
     def thumbnail_selected(self):
         if self.var_chk_thumbnail.get():
             self.var_chk_audio.set("False")
+            self.audio_extension.configure(state="disabled")
 
     def setup(self):
         self.toplevel_window = None
