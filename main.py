@@ -18,9 +18,7 @@ import yt_dlp
 from packaging import version
 from win11toast import toast
 
-import requests
 from bs4 import BeautifulSoup
-
 
 class App(ctk.CTk):
     config = configparser.ConfigParser(interpolation=None)
