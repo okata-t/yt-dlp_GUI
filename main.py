@@ -333,7 +333,7 @@ class App(ctk.CTk):
             "postprocessor_hooks": [self.postprocessor_hook],
             "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
             "postprocessors": [],
-            "ignoreerrors": True,
+            "ignoreerrors": False,
         }
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
@@ -383,7 +383,15 @@ class App(ctk.CTk):
         self.lbl_progress.configure(text="準備中")
         self.lbl_eta.configure(text="")
         with yt_dlp.YoutubeDL(self.opt) as ydl:
-            ydl.download([url])
+            try:
+                ydl.download([url])
+            except Exception as e:
+                CTkMessagebox.CTkMessagebox(
+                    title="エラーが発生しました",
+                    message=e,
+                    icon="cancel",
+                    font=self.fonts,
+                )
 
     def progress_hook(self, d):
         if d["status"] == "downloading":
