@@ -15,10 +15,10 @@ import darkdetect
 import pyperclip
 import requests
 import yt_dlp
+from bs4 import BeautifulSoup
 from packaging import version
 from win11toast import toast
 
-from bs4 import BeautifulSoup
 
 class App(ctk.CTk):
     config = configparser.ConfigParser(interpolation=None)
@@ -27,7 +27,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        #Windowsのテーマ色設定。"Light" or "Dark"
+        # Windowsのテーマ色設定。"Light" or "Dark"
         self.color_mode = darkdetect.theme()
 
         ver = configparser.ConfigParser()
@@ -54,7 +54,7 @@ class App(ctk.CTk):
             "https://api.github.com/repos/okata-t/yt-dlp_GUI/releases/latest"
         )
 
-        #API呼び出し上限の場合、スクレイピングしてバージョンを取得
+        # API呼び出し上限の場合、スクレイピングしてバージョンを取得
         try:
             latest_version = r.json()["tag_name"]
         except KeyError:
@@ -170,7 +170,7 @@ class App(ctk.CTk):
                 self.config.write(f)
 
     def init_config(self):
-        #Downloadsフォルダのパスを取得
+        # Downloadsフォルダのパスを取得
         user_folder = os.path.expanduser("~")
         download_path = os.path.join(user_folder, "Downloads")
 
