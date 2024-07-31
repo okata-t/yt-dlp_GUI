@@ -90,6 +90,7 @@ class App(ctk.CTk):
                 sys.exit()
 
     def uninstall(self):
+        os.remove("config.ini")
         cp = subprocess.run("start unins000.exe", shell=True)
         if cp.returncode == 0:
             sys.exit()
