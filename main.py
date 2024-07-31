@@ -362,7 +362,7 @@ class App(ctk.CTk):
 
         if download_audio:
             self.opt["postprocessors"].append(
-                {"key": "FFmpegExtractAudio", "preferredcodec": self.combobox_1.get()}
+                {"key": "FFmpegExtractAudio", "preferredcodec": self.audio_extension.get()}
             )
             self.opt["format"] = "bestaudio/best"
 
