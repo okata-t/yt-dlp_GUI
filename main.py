@@ -30,7 +30,7 @@ class App(ctk.CTk):
         super().__init__()
 
         #Windowsのテーマ色設定。"Light" or "Dark"
-        self.color_mode = "Light" #darkdetect.theme()
+        self.color_mode = darkdetect.theme()
 
         ver = configparser.ConfigParser()
         ver.read("version.ini", encoding="shift-jis")
