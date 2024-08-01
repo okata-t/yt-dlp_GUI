@@ -46,8 +46,7 @@ class App(ctk.CTk):
         self.setup()
         self.load_option()
         self.check_version(this_version)
-        self.audio_selected()
-        self.audio_extension_selected(self.config["Option"]["audio_extension"])
+        self.check_option()
 
     def check_version(self, this_version):
         r = requests.get(
@@ -155,7 +154,7 @@ class App(ctk.CTk):
             self.config["Option"] = {}
             self.config["Option"]["download_audio"] = str(self.chk_audio.get())
             self.config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
-            self.config["Option"]["audio_extension"] = str(self.audio_extension.get())
+            self.config["Option"]["extension"] = str(self.cmb_extension.get())
             self.config.write(f)
         self.destroy()
 
@@ -163,7 +162,7 @@ class App(ctk.CTk):
         try:
             self.var_chk_audio.set(self.config["Option"]["download_audio"])
             self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
-            self.audio_extension.set(self.config["Option"]["audio_extension"])
+            self.cmb_extension.set(self.config["Option"]["extension"])
         except KeyError as error_message:
             a = str(error_message)
             with open(self.ini_path, "w") as f:
@@ -182,26 +181,27 @@ class App(ctk.CTk):
             self.config["Option"] = {}
             self.config["Option"]["download_audio"] = "0"
             self.config["Option"]["embed_thumbnail"] = "0"
-            self.config["Option"]["audio_extension"] = "mp3"
+            self.config["Option"]["extension"] = "mp4"
             self.config.write(f)
 
-    def audio_selected(self):
+    def check_option(self, *args):
         if self.var_chk_audio.get():
-            self.audio_extension.configure(state="normal")
-            if self.audio_extension.get() == "wav":
+            self.cmb_extension.configure(values=self.dict_file["audio"])
+            if self.cmb_extension.get() == "wav":
                 self.var_chk_thumbnail.set(False)
                 self.chk_thumbnail.configure(state="disabled")
+            else:
+                self.chk_thumbnail.configure(state="normal")
         else:
-            self.audio_extension.configure(state="disabled")
+            self.cmb_extension.configure(values=self.dict_file["movie"])
             self.chk_thumbnail.configure(state="normal")
 
-    def audio_extension_selected(self, audio):
-        if audio == "wav":
-            if self.var_chk_audio.get():
-                self.var_chk_thumbnail.set(False)
-                self.chk_thumbnail.configure(state="disabled")
+    def change_extension(self, mode):
+        if self.var_chk_audio.get():
+
+            self.cmb_extension.set(self.dict_file["audio"][0])
         else:
-            self.chk_thumbnail.configure(state="normal")
+            self.cmb_extension.set(self.dict_file["movie"][0])
 
     def setup(self):
         self.toplevel_window = None
@@ -314,7 +314,10 @@ class App(ctk.CTk):
             self.frame_option,
             text="音声のみダウンロード",
             font=self.fonts,
-            command=self.audio_selected,
+            command=lambda: [
+                self.check_option(),
+                self.change_extension(self.var_chk_audio),
+            ],
             variable=self.var_chk_audio,
         )
         self.chk_audio.grid(row=0, column=0, padx=10, pady=10, sticky="w")
@@ -328,16 +331,19 @@ class App(ctk.CTk):
         )
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
-        dict_file = ["mp3", "wav", "m4a", "opus"]
+        self.dict_file = {
+            "movie": ["mp4", "webm"],
+            "audio": ["mp3", "wav", "m4a", "opus"],
+        }
 
-        self.audio_extension = ctk.CTkComboBox(
+        self.cmb_extension = ctk.CTkComboBox(
             self.frame_option,
-            values=list(dict_file),
+            values=self.dict_file["movie"],
             font=self.fonts,
             width=100,
-            command=self.audio_extension_selected,
+            command=self.check_option,
         )
-        self.audio_extension.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.cmb_extension.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
     def paste(self):
         clip_text = pyperclip.paste()
@@ -354,9 +360,8 @@ class App(ctk.CTk):
         self.opt = {
             "progress_hooks": [self.progress_hook],
             "postprocessor_hooks": [self.postprocessor_hook],
-            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
             "postprocessors": [],
-            "ignoreerrors": False,
+            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
         }
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
@@ -381,14 +386,24 @@ class App(ctk.CTk):
         if file_name == "":
             file_name = "%(title)s"
 
+        extension = self.cmb_extension.get()
         download_audio = self.chk_audio.get()
         embed_thumbnail = self.chk_thumbnail.get()
+
+        if extension == "webm":
+            self.opt["format"] = "best[ext=webm]/bestvideo+bestaudio/best[ext=mp4]"
+            self.opt["postprocessors"].append(
+                {
+                    "key": "FFmpegVideoConvertor",
+                    "preferedformat": "webm",
+                }
+            )
 
         if download_audio:
             self.opt["postprocessors"].append(
                 {
                     "key": "FFmpegExtractAudio",
-                    "preferredcodec": self.audio_extension.get(),
+                    "preferredcodec": extension,
                 }
             )
             self.opt["format"] = "bestaudio/best"
