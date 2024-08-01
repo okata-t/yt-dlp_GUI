@@ -166,9 +166,17 @@ class App(ctk.CTk):
             )
         )
 
-        dropdown_others.add_option(
-            "GitHubを開く",
-            command=lambda: webbrowser.open("https://github.com/okata-t/yt-dlp_GUI"),
+        submenu_url = dropdown_others.add_submenu("リンクを開く")
+        self.urls = []
+        self.urls.append(
+            submenu_url.add_option(
+                "GitHubを開く", command=lambda: webbrowser.open("https://github.com/okata-t/yt-dlp_GUI")
+            )
+        )
+        self.urls.append(
+            submenu_url.add_option(
+                "YouTubeを開く", command=lambda: webbrowser.open("https://www.youtube.com")
+            )
         )
         dropdown_others.add_option("アンインストール", command=self.uninstall)
 
