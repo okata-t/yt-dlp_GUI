@@ -6,6 +6,7 @@ import subprocess
 import sys
 import threading
 import tkinter as tk
+import webbrowser
 from tkinter import filedialog
 
 import CTkMenuBar
@@ -47,6 +48,7 @@ class App(ctk.CTk):
         self.load_option()
         self.check_version(this_version)
         self.check_option()
+        self.set_submenu_color(self.cookies, self.dict_browser)
 
     def check_version(self, this_version):
         r = requests.get(
@@ -75,27 +77,33 @@ class App(ctk.CTk):
                 option_3="GitHubへ",
             )
             if msg.get() == "GitHubへ":
-                subprocess.run(
-                    "start https://github.com/okata-t/yt-dlp_GUI/releases/latest",
-                    shell=True,
-                )
+                webbrowser.open("https://github.com/okata-t/yt-dlp_GUI/releases/latest")
                 sys.exit()
             elif msg.get() == "ダウンロード":
-                subprocess.run(
-                    "start https://github.com/okata-t/yt-dlp_GUI/releases/latest/"
-                    + "download/yt-dlp_GUI_Setup.exe",
-                    shell=True,
+                webbrowser.open(
+                    "https://github.com/okata-t/yt-dlp_GUI/releases/"
+                    + "latest/download/yt-dlp_GUI_Setup.exe"
                 )
                 sys.exit()
 
     def uninstall(self):
-        os.remove("config.ini")
-        cp = subprocess.run("start unins000.exe", shell=True)
-        if cp.returncode == 0:
-            sys.exit()
+        msg = CTkMessagebox.CTkMessagebox(
+            title="アンインストール",
+            message="本当にアンインストールしますか？",
+            icon="info",
+            font=self.fonts,
+            option_1="キャンセル",
+            option_2="アンインストール",
+        )
+        if msg.get() == "アンインストール":
+            os.remove("config.ini")
+            cp = subprocess.run("start unins000.exe", shell=True)
+            if cp.returncode == 0:
+                sys.exit()
 
     # メニューバーを追加
     def create_menu(self):
+        self.color_selected = "#808080"
         if self.color_mode == "Dark":
             self.color_menubar = "#242424"
             self.color_edit = "#EBEBEB"
@@ -104,43 +112,65 @@ class App(ctk.CTk):
             self.color_edit = "#242424"
         menu = CTkMenuBar.CTkMenuBar(self, bg_color=self.color_menubar)
         self.pack_propagate(0)
-        # File menu
-        file_menu = menu.add_cascade("オプション", font=self.fonts)
-        file_dropdown = CTkMenuBar.CustomDropdownMenu(file_menu, font=self.fonts)
-        file_dropdown.add_option(
-            "YouTubeを開く",
-            command=lambda: subprocess.run("start https://youtube.com", shell=True),
+
+        menu_option = menu.add_cascade("設定", font=self.fonts)
+        menu_view = menu.add_cascade("表示", font=self.fonts)
+        menu_others = menu.add_cascade("その他", font=self.fonts)
+
+        dropdown_option = CTkMenuBar.CustomDropdownMenu(menu_option, font=self.fonts)
+        dropdown_view = CTkMenuBar.CustomDropdownMenu(menu_view, font=self.fonts)
+        dropdown_others = CTkMenuBar.CustomDropdownMenu(menu_others, font=self.fonts)
+
+        submenu_cookie = dropdown_option.add_submenu("Cookie設定")
+        self.cookies = []
+        self.dict_browser = {
+            "なし": "",
+            "Brave": "brave",
+            "Google Chrome": "chrome",
+            "Microsoft Edge": "edge",
+            "Mozilla FireFox": "firefox",
+            "Opera": "opera",
+            "Vivaldi": "vivaldi",
+        }
+        self.cookies.append(
+            submenu_cookie.add_option("なし", command=lambda: self.select_cookie(""))
         )
-        file_dropdown.add_option(
-            "アンインストール",
-            command=lambda: self.uninstall(),
+        self.cookies.append(
+            submenu_cookie.add_option(
+                "Brave", command=lambda: self.select_cookie("brave")
+            )
         )
-        file_dropdown.add_separator()
+        self.cookies.append(
+            submenu_cookie.add_option(
+                "Google Chrome", command=lambda: self.select_cookie("chrome")
+            )
+        )
+        self.cookies.append(
+            submenu_cookie.add_option(
+                "Microsoft Edge", command=lambda: self.select_cookie("edge")
+            )
+        )
+        self.cookies.append(
+            submenu_cookie.add_option(
+                "Mozilla FireFox", command=lambda: self.select_cookie("firefox")
+            )
+        )
+        self.cookies.append(
+            submenu_cookie.add_option(
+                "Opera", command=lambda: self.select_cookie("opera")
+            )
+        )
+        self.cookies.append(
+            submenu_cookie.add_option(
+                "Vivaldi", command=lambda: self.select_cookie("vivaldi")
+            )
+        )
 
-        # メニューバーのテンプレート
-        """
-        export_submenu = file_dropdown.add_submenu("Export As")
-        export_submenu.add_option(".TXT")
-        export_submenu.add_option(".PDF")
-
-        # Edit menu
-        edit_menu = menu.add_cascade("Edit")
-        edit_dropdown = CustomDropdownMenu(edit_menu)
-        edit_dropdown.add_option("Cut")
-        edit_dropdown.add_option("Copy")
-        edit_dropdown.add_option("Paste")
-
-        # Settings menu
-        settings_menu = menu.add_cascade("Settings")
-        settings_dropdown = CustomDropdownMenu(settings_menu)
-        settings_dropdown.add_option("Preferences")
-        settings_dropdown.add_option("Update")
-
-        # About menu
-        about_menu = menu.add_cascade("About")
-        about_dropdown = CustomDropdownMenu(about_menu)
-        about_dropdown.add_option("Hello World")
-        """
+        dropdown_others.add_option(
+            "GitHubを開く",
+            command=lambda: webbrowser.open("https://github.com/okata-t/yt-dlp_GUI"),
+        )
+        dropdown_others.add_option("アンインストール", command=self.uninstall)
 
     def read_config(self):
         if not os.path.exists(self.ini_path):
@@ -155,6 +185,7 @@ class App(ctk.CTk):
             self.config["Option"]["download_audio"] = str(self.chk_audio.get())
             self.config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
             self.config["Option"]["extension"] = str(self.cmb_extension.get())
+            self.config["Option"]["browser"] = str(self.browser)
             self.config.write(f)
         self.destroy()
 
@@ -163,9 +194,11 @@ class App(ctk.CTk):
             self.var_chk_audio.set(self.config["Option"]["download_audio"])
             self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
             self.cmb_extension.set(self.config["Option"]["extension"])
+            self.browser = self.config["Option"]["browser"]
         except KeyError as error_message:
             a = str(error_message)
             with open(self.ini_path, "w") as f:
+                self.config["Directory"][a[1:-1]] = ""
                 self.config["Option"][a[1:-1]] = ""
                 self.config.write(f)
 
@@ -182,6 +215,7 @@ class App(ctk.CTk):
             self.config["Option"]["download_audio"] = "0"
             self.config["Option"]["embed_thumbnail"] = "0"
             self.config["Option"]["extension"] = "mp4"
+            self.config["Option"]["browser"] = ""
             self.config.write(f)
 
     def check_option(self, *args):
@@ -202,6 +236,20 @@ class App(ctk.CTk):
             self.cmb_extension.set(self.dict_file["audio"][0])
         else:
             self.cmb_extension.set(self.dict_file["movie"][0])
+
+    def select_cookie(self, browser):
+        self.browser = browser
+        self.set_submenu_color(self.cookies, self.dict_browser)
+
+    def set_submenu_color(self, submenu, dict):
+        for c in submenu:
+            if (
+                c.cget("option")
+                == [k for k, v in self.dict_browser.items() if v == self.browser][0]
+            ):
+                c.configure(fg_color=self.color_selected)
+            else:
+                c.configure(fg_color="transparent")
 
     def setup(self):
         self.toplevel_window = None
@@ -411,6 +459,10 @@ class App(ctk.CTk):
         if embed_thumbnail:
             self.opt["writethumbnail"] = True
             self.opt["postprocessors"].append({"key": "EmbedThumbnail"})
+
+        if self.browser != "":
+            self.opt["cookiesfrombrowser"] = (self.browser,)
+
         self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
         self.download_finished = 1 if download_audio else 2
         self.thread = threading.Thread(target=self.download, args=(url,))
