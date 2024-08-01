@@ -291,7 +291,7 @@ class App(ctk.CTk):
         self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
 
     def select_appearance(self, appearance):
-        self.appearance = appearance
+        self.appearance = appearance if appearance != "" else "System"
         ctk.set_appearance_mode(self.appearance)
         if self.appearance == "Dark" or (
             self.appearance == "System" and self.color_mode == "Dark"
