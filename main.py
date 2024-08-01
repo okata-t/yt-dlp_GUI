@@ -20,6 +20,8 @@ from bs4 import BeautifulSoup
 from packaging import version
 from win11toast import toast
 
+import color
+
 
 class App(ctk.CTk):
     config = configparser.ConfigParser(interpolation=None)
@@ -34,9 +36,11 @@ class App(ctk.CTk):
         ver = configparser.ConfigParser()
         ver.read("version.ini", encoding="shift-jis")
         this_version = ver["Version"]["version"]
-
-        ctk.set_appearance_mode(self.color_mode)
-        ctk.set_default_color_theme("blue")
+        ctk.set_appearance_mode("System")
+        try:
+            ctk.set_default_color_theme("theme.json")
+        except FileNotFoundError:
+            ctk.set_default_color_theme("blue")
         self.fonts = ("游ゴシック", 15)
         self.title("yt-dlp_GUI " + this_version)
         self.geometry("900x300")
@@ -48,7 +52,9 @@ class App(ctk.CTk):
         self.load_option()
         self.check_version(this_version)
         self.check_option()
-        self.set_submenu_color(self.cookies, self.dict_browser)
+        self.select_appearance(self.appearance)
+        self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
+        self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
 
     def check_version(self, this_version):
         r = requests.get(
@@ -110,15 +116,17 @@ class App(ctk.CTk):
         else:
             self.color_menubar = "#EBEBEB"
             self.color_edit = "#242424"
-        menu = CTkMenuBar.CTkMenuBar(self, bg_color=self.color_menubar)
+        self.menu = CTkMenuBar.CTkMenuBar(self, bg_color=self.color_menubar)
         self.pack_propagate(0)
 
-        menu_option = menu.add_cascade("設定", font=self.fonts)
-        menu_view = menu.add_cascade("表示", font=self.fonts)
-        menu_others = menu.add_cascade("その他", font=self.fonts)
+        menu_option = self.menu.add_cascade("設定", font=self.fonts)
+        menu_view = self.menu.add_cascade("表示", font=self.fonts)
+        menu_link = self.menu.add_cascade("リンクを開く", font=self.fonts)
+        menu_others = self.menu.add_cascade("その他", font=self.fonts)
 
         dropdown_option = CTkMenuBar.CustomDropdownMenu(menu_option, font=self.fonts)
         dropdown_view = CTkMenuBar.CustomDropdownMenu(menu_view, font=self.fonts)
+        dropdown_link = CTkMenuBar.CustomDropdownMenu(menu_link, font=self.fonts)
         dropdown_others = CTkMenuBar.CustomDropdownMenu(menu_others, font=self.fonts)
 
         submenu_cookie = dropdown_option.add_submenu("Cookie設定")
@@ -166,10 +174,48 @@ class App(ctk.CTk):
             )
         )
 
-        dropdown_others.add_option(
-            "GitHubを開く",
+        self.submenu_appearance = dropdown_view.add_submenu("外観")
+        self.appearances = []
+        self.dict_appearance = {
+            "システム（メニューバーは再起動時反映）": "System",
+            "ダーク": "Dark",
+            "ライト": "Light",
+        }
+        self.appearances.append(
+            self.submenu_appearance.add_option(
+                "システム(メニューバーは再起動時反映)",
+                command=lambda: self.select_appearance("System"),
+            )
+        )
+        self.appearances.append(
+            self.submenu_appearance.add_option(
+                "ダーク", command=lambda: self.select_appearance("Dark")
+            )
+        )
+        self.appearances.append(
+            self.submenu_appearance.add_option(
+                "ライト", command=lambda: self.select_appearance("Light")
+            )
+        )
+
+        dropdown_view.add_option(
+            "テーマエディタを開く",
+            command=self.edit_theme,
+        )
+
+        dropdown_link.add_option(
+            "GitHub",
             command=lambda: webbrowser.open("https://github.com/okata-t/yt-dlp_GUI"),
         )
+        dropdown_link.add_option(
+            "YouTube",
+            command=lambda: webbrowser.open("https://www.youtube.com"),
+        )
+        dropdown_link.add_option(
+            "ニコニコ動画",
+            command=lambda: webbrowser.open("https://www.nicovideo.jp"),
+        )
+
         dropdown_others.add_option("アンインストール", command=self.uninstall)
 
     def read_config(self):
@@ -182,15 +228,17 @@ class App(ctk.CTk):
             self.config["Directory"]["lastdir"] = self.ent_savedir.get()
             self.config["Directory"]["filename"] = self.ent_filename.get()
             self.config["Option"] = {}
+            self.config["Option"]["appearance"] = self.appearance
             self.config["Option"]["download_audio"] = str(self.chk_audio.get())
             self.config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
             self.config["Option"]["extension"] = str(self.cmb_extension.get())
-            self.config["Option"]["browser"] = str(self.browser)
+            self.config["Option"]["browser"] = self.browser
             self.config.write(f)
         self.destroy()
 
     def load_option(self):
         try:
+            self.appearance = self.config["Option"]["appearance"]
             self.var_chk_audio.set(self.config["Option"]["download_audio"])
             self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
             self.cmb_extension.set(self.config["Option"]["extension"])
@@ -212,6 +260,7 @@ class App(ctk.CTk):
             self.config["Directory"]["lastdir"] = download_path
             self.config["Directory"]["filename"] = ""
             self.config["Option"] = {}
+            self.config["Option"]["appearance"] = "System"
             self.config["Option"]["download_audio"] = "0"
             self.config["Option"]["embed_thumbnail"] = "0"
             self.config["Option"]["extension"] = "mp4"
@@ -239,17 +288,34 @@ class App(ctk.CTk):
 
     def select_cookie(self, browser):
         self.browser = browser
-        self.set_submenu_color(self.cookies, self.dict_browser)
+        self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
 
-    def set_submenu_color(self, submenu, dict):
+    def select_appearance(self, appearance):
+        self.appearance = appearance
+        ctk.set_appearance_mode(self.appearance)
+        if self.appearance == "Dark" or (
+            self.appearance == "System" and self.color_mode == "Dark"
+        ):
+            self.color_menubar = "#242424"
+            self.color_edit = "#EBEBEB"
+        else:
+            self.color_menubar = "#EBEBEB"
+            self.color_edit = "#242424"
+        self.menu.configure(bg_color=self.color_menubar)
+        self.btn_editname.configure(text_color=self.color_edit)
+        self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
+
+    def set_submenu_color(self, submenu, dict, option):
         for c in submenu:
-            if (
-                c.cget("option")
-                == [k for k, v in self.dict_browser.items() if v == self.browser][0]
-            ):
+            if c.cget("option") == [k for k, v in dict.items() if v == option][0]:
                 c.configure(fg_color=self.color_selected)
             else:
                 c.configure(fg_color="transparent")
+
+    def edit_theme(self):
+        color.main(self.color_mode, "theme.json", self.fonts)
+        ctk.set_default_color_theme("theme.json")
+        restart(self)
 
     def setup(self):
         self.toplevel_window = None
@@ -648,6 +714,12 @@ class EditFilename(ctk.CTkToplevel):
             text = text.replace("%(" + self.dict[key] + ")s", '"' + key + '"')
         self.entry.delete(0, tk.END)
         self.entry.insert(0, text)
+
+
+def restart(app):
+    app.write_config()
+    app = App()
+    app.mainloop()
 
 
 app = App()
