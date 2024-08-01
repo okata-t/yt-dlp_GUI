@@ -189,6 +189,7 @@ class App(ctk.CTk):
         if self.var_chk_audio.get():
             self.audio_extension.configure(state="normal")
             if self.audio_extension.get() == "wav":
+                self.var_chk_thumbnail.set(False)
                 self.chk_thumbnail.configure(state="disabled")
         else:
             self.audio_extension.configure(state="disabled")
