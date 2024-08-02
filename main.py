@@ -27,6 +27,16 @@ class App(ctk.CTk):
     config = configparser.ConfigParser(interpolation=None)
     ini_path = "config.ini"
 
+    default_config = [
+        ("Directory", "lastdir", os.path.join(os.path.expanduser("~"), "Downloads")),
+        ("Directory", "filename", ""),
+        ("Option", "appearance", "System"),
+        ("Option", "download_audio", "0"),
+        ("Option", "embed_thumbnail", "0"),
+        ("Option", "extension", "mp4"),
+        ("Option", "browser", ""),
+    ]
+
     def __init__(self):
         super().__init__()
 
@@ -215,12 +225,16 @@ class App(ctk.CTk):
             "ニコニコ動画",
             command=lambda: webbrowser.open("https://www.nicovideo.jp"),
         )
+        dropdown_link.add_option(
+            "Twitch",
+            command=lambda: webbrowser.open("https://www.twitch.tv"),
+        )
 
         dropdown_others.add_option("アンインストール", command=self.uninstall)
 
     def read_config(self):
         if not os.path.exists(self.ini_path):
-            self.init_config()
+            self.fix_config()
         self.config.read(self.ini_path, encoding="shift-jis")
 
     def write_config(self):
@@ -243,29 +257,19 @@ class App(ctk.CTk):
             self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
             self.cmb_extension.set(self.config["Option"]["extension"])
             self.browser = self.config["Option"]["browser"]
-        except KeyError as error_message:
-            a = str(error_message)
-            with open(self.ini_path, "w") as f:
-                self.config["Directory"][a[1:-1]] = ""
-                self.config["Option"][a[1:-1]] = ""
-                self.config.write(f)
+        except KeyError:
+            self.fix_config()
+            self.load_option()
 
-    def init_config(self):
-        # Downloadsフォルダのパスを取得
-        user_folder = os.path.expanduser("~")
-        download_path = os.path.join(user_folder, "Downloads")
-
+    def fix_config(self):
+        for section, key, value in self.default_config:
+            if not self.config.has_section(section):
+                self.config[section] = {}
+            if not self.config.has_option(section, key):
+                self.config[section][key] = value
         with open(self.ini_path, "w") as f:
-            self.config["Directory"] = {}
-            self.config["Directory"]["lastdir"] = download_path
-            self.config["Directory"]["filename"] = ""
-            self.config["Option"] = {}
-            self.config["Option"]["appearance"] = "System"
-            self.config["Option"]["download_audio"] = "0"
-            self.config["Option"]["embed_thumbnail"] = "0"
-            self.config["Option"]["extension"] = "mp4"
-            self.config["Option"]["browser"] = ""
             self.config.write(f)
+        self.read_config()
 
     def check_option(self, *args):
         if self.var_chk_audio.get():
