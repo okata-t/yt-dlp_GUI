@@ -1,5 +1,6 @@
 import configparser
 import datetime
+import io
 import math
 import os
 import subprocess
@@ -18,6 +19,7 @@ import requests
 import yt_dlp
 from bs4 import BeautifulSoup
 from packaging import version
+from PIL import Image
 from win11toast import toast
 
 import color
@@ -53,7 +55,6 @@ class App(ctk.CTk):
             ctk.set_default_color_theme("blue")
         self.fonts = ("游ゴシック", 15)
         self.title("yt-dlp_GUI " + this_version)
-        self.geometry("900x300")
         self.iconbitmap("icon.ico")
 
         self.create_menu()
@@ -210,7 +211,9 @@ class App(ctk.CTk):
 
         dropdown_view.add_option(
             "テーマエディタを開く",
-            command=self.edit_theme,
+            command=lambda: color.EditTheme(
+                self, self.color_mode, "theme.json", self.fonts
+            ),
         )
 
         dropdown_link.add_option(
@@ -231,6 +234,11 @@ class App(ctk.CTk):
         )
 
         dropdown_others.add_option("アンインストール", command=self.uninstall)
+
+    def restart(self, app):
+        app.write_config()
+        app = App()
+        app.mainloop()
 
     def read_config(self):
         if not os.path.exists(self.ini_path):
@@ -281,7 +289,21 @@ class App(ctk.CTk):
                 self.chk_thumbnail.configure(state="normal")
         else:
             self.cmb_extension.configure(values=self.dict_file["movie"])
-            self.chk_thumbnail.configure(state="normal")
+            if self.cmb_extension.get() == "webm":
+                self.var_chk_thumbnail.set(False)
+                self.chk_thumbnail.configure(state="disabled")
+            else:
+                self.chk_thumbnail.configure(state="normal")
+
+        if self.var_chk_duration.get():
+            self.ent_duration_start.configure(state="normal")
+            self.lbl_duration_hyphen.configure(state="normal")
+            self.ent_duration_end.configure(state="normal")
+        else:
+
+            self.ent_duration_start.configure(state="disabled")
+            self.lbl_duration_hyphen.configure(state="disabled")
+            self.ent_duration_end.configure(state="disabled")
 
     def change_extension(self, mode):
         if self.var_chk_audio.get():
@@ -316,31 +338,32 @@ class App(ctk.CTk):
             else:
                 c.configure(fg_color="transparent")
 
-    def edit_theme(self):
-        color.main(self.color_mode, "theme.json", self.fonts)
-        ctk.set_default_color_theme("theme.json")
-        restart(self)
-
     def setup(self):
         self.toplevel_window = None
-        self.frame_main = ctk.CTkFrame(self, width=540)
-        self.frame_main.grid(row=0, column=0, padx=10, pady=35, sticky="nsew")
-
-        self.frame_option = ctk.CTkFrame(self, width=360)
-        self.frame_option.grid(row=0, column=1, padx=10, pady=35, sticky="nsew")
-
-        self.frame_progress = ctk.CTkFrame(self, width=920)
-        self.frame_progress.grid(
-            row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew"
+        self.frame_main = ctk.CTkFrame(
+            self,
         )
-        self.rowconfigure(1, weight=1)
+        self.frame_main.grid(row=0, column=0, padx=10, pady=(35, 10), sticky="nsew")
+
+        self.frame_info = ctk.CTkFrame(self)
+        self.frame_info.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+
+        self.frame_option = ctk.CTkFrame(self)
+        self.frame_option.grid(
+            row=0, column=1, rowspan=2, padx=10, pady=(35, 10), sticky="nsew"
+        )
+
+        self.frame_progress = ctk.CTkFrame(self)
+        self.frame_progress.grid(
+            row=2, column=0, columnspan=2, padx=10, pady=10, sticky="nsew"
+        )
+        self.rowconfigure(2, weight=1)
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
         self.frame_main.columnconfigure(1, weight=1)
         self.frame_progress.columnconfigure(0, weight=1)
 
         self.ent_url = ctk.CTkEntry(
-            self.frame_main, width=400, placeholder_text="URL", font=self.fonts
+            self.frame_main, width=520, placeholder_text="URL", font=self.fonts
         )
         self.ent_url.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
@@ -360,7 +383,6 @@ class App(ctk.CTk):
 
         self.ent_savedir = ctk.CTkEntry(
             self.frame_main,
-            width=400,
             placeholder_text="保存先フォルダ",
             font=self.fonts,
         )
@@ -399,7 +421,6 @@ class App(ctk.CTk):
         self.ent_filename = ctk.CTkEntry(
             self.frame_main,
             placeholder_text="保存ファイル名(空白ならタイトル)",
-            width=340,
             font=self.fonts,
         )
         self.ent_filename.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
@@ -415,13 +436,43 @@ class App(ctk.CTk):
         )
         self.btn_download.grid(row=2, column=2, padx=10, pady=10)
 
+        self.info = {}
+
+        self.btn_info = ctk.CTkButton(
+            self.frame_info,
+            width=100,
+            text="動画情報の取得",
+            font=self.fonts,
+            command=self.start_get_info,
+        )
+        self.btn_info.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
+        self.lbl_info_title = ctk.CTkLabel(self.frame_info, font=self.fonts)
+        self.lbl_info_img = ctk.CTkLabel(self.frame_info, text="")
+        self.lbl_duration = ctk.CTkLabel(self.frame_info, font=self.fonts)
+        self.var_chk_duration = ctk.BooleanVar()
+        self.chk_duration = ctk.CTkCheckBox(
+            self.frame_info,
+            text="範囲指定でダウンロード",
+            font=self.fonts,
+            variable=self.var_chk_duration,
+            command=self.check_option,
+        )
+        self.ent_duration_start = ctk.CTkEntry(
+            self.frame_info, font=self.fonts, width=60
+        )
+        self.lbl_duration_hyphen = ctk.CTkLabel(
+            self.frame_info, text="-", font=self.fonts
+        )
+        self.ent_duration_end = ctk.CTkEntry(self.frame_info, font=self.fonts, width=60)
+
         self.lbl_progress = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
         self.lbl_progress.grid(row=0, column=0, padx=10, sticky="w")
 
         self.lbl_eta = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
         self.lbl_eta.grid(row=0, column=1, padx=10, sticky="e")
 
-        self.pbar_progress = ctk.CTkProgressBar(self.frame_progress, width=920)
+        self.pbar_progress = ctk.CTkProgressBar(self.frame_progress)
         self.pbar_progress.grid(
             row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew"
         )
@@ -458,7 +509,6 @@ class App(ctk.CTk):
             self.frame_option,
             values=self.dict_file["movie"],
             font=self.fonts,
-            width=100,
             command=self.check_option,
         )
         self.cmb_extension.grid(row=2, column=0, padx=10, pady=10, sticky="w")
@@ -473,6 +523,68 @@ class App(ctk.CTk):
         file_path = filedialog.askdirectory(initialdir=inidir)
         self.ent_savedir.delete(0, tk.END)
         self.ent_savedir.insert(0, file_path)
+
+    def start_get_info(self):
+        self.thread_info = threading.Thread(target=self.get_info)
+        self.thread_info.start()
+
+    def get_info(self):
+        url = self.ent_url.get()
+        with yt_dlp.YoutubeDL() as ydl:
+            try:
+                info = ydl.extract_info(url, download=False)
+                self.info = {
+                    "title": info["title"],
+                    "duration": info["duration"],
+                    "tumbnail": info["thumbnail"],
+                }
+
+                self.lbl_info_title.configure(text=info["title"])
+                self.lbl_info_title.grid(
+                    row=0, column=1, columnspan=4, padx=10, pady=10, sticky="w"
+                )
+                self.frame_info.columnconfigure(1, weight=1)
+
+                self.lbl_info_img.configure(
+                    image=ctk.CTkImage(
+                        dark_image=Image.open(
+                            io.BytesIO(requests.get(info["thumbnail"]).content)
+                        ),
+                        size=(640, 360),
+                    )
+                )
+                self.lbl_info_img.grid(
+                    row=1, column=0, columnspan=5, padx=10, pady=10, sticky="w"
+                )
+
+                self.lbl_duration.configure(
+                    text=str(
+                        datetime.timedelta(seconds=round(float(self.info["duration"])))
+                    )
+                )
+                self.lbl_duration.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+
+                self.chk_duration.grid(row=2, column=1, padx=10, pady=10)
+
+                self.ent_duration_start.configure(placeholder_text="0:00:00")
+                self.ent_duration_start.grid(row=2, column=2, padx=10, pady=10)
+
+                self.lbl_duration_hyphen.grid(row=2, column=3, pady=10)
+
+                self.ent_duration_end.configure(
+                    placeholder_text=str(
+                        datetime.timedelta(seconds=round(float(self.info["duration"])))
+                    )
+                )
+                self.ent_duration_end.grid(row=2, column=4, padx=10, pady=10)
+
+            except Exception as e:
+                CTkMessagebox.CTkMessagebox(
+                    title="エラーが発生しました",
+                    message=e,
+                    icon="cancel",
+                    font=self.fonts,
+                )
 
     def start_download(self):
         self.opt = {
@@ -526,6 +638,28 @@ class App(ctk.CTk):
             )
             self.opt["format"] = "bestaudio/best"
 
+        def set_download_ranges(*args):
+            duration_opt = [
+                {
+                    "start_time": datetime.timedelta(
+                        hours=start_time.hour,
+                        minutes=start_time.minute,
+                        seconds=start_time.second,
+                    ).total_seconds(),
+                    "end_time": datetime.timedelta(
+                        hours=end_time.hour,
+                        minutes=end_time.minute,
+                        seconds=end_time.second,
+                    ).total_seconds(),
+                }
+            ]
+            return duration_opt
+
+        if self.chk_duration.get():
+            start_time = datetime.datetime.strptime(self.ent_duration_start.get(), "%X")
+            end_time = datetime.datetime.strptime(self.ent_duration_end.get(), "%X")
+            self.opt["download_ranges"] = set_download_ranges
+
         if embed_thumbnail:
             self.opt["writethumbnail"] = True
             self.opt["postprocessors"].append({"key": "EmbedThumbnail"})
@@ -535,8 +669,8 @@ class App(ctk.CTk):
 
         self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
         self.download_finished = 1 if download_audio else 2
-        self.thread = threading.Thread(target=self.download, args=(url,))
-        self.thread.start()
+        self.thread_download = threading.Thread(target=self.download, args=(url,))
+        self.thread_download.start()
 
     def download(self, url):
         self.pbar_progress.set(0)
@@ -623,7 +757,6 @@ class EditFilename(ctk.CTkToplevel):
         super().__init__(master)
         self.fonts = ("游ゴシック", 15)
         self.title("ファイル名テンプレートの編集")
-        self.geometry("740x240")
         self.after(100, self.focus)
 
         self.dict = {
@@ -643,7 +776,7 @@ class EditFilename(ctk.CTkToplevel):
 
         self.frame_entry = ctk.CTkFrame(self)
         self.frame_entry.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.frame_option = ctk.CTkFrame(self, width=600)
+        self.frame_option = ctk.CTkFrame(self)
         self.frame_option.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         self.columnconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
@@ -668,7 +801,6 @@ class EditFilename(ctk.CTkToplevel):
                 ctk.CTkButton(
                     self.frame_option,
                     font=self.fonts,
-                    width=160,
                     fg_color="transparent",
                 )
                 for i in range(5)
@@ -718,12 +850,6 @@ class EditFilename(ctk.CTkToplevel):
             text = text.replace("%(" + self.dict[key] + ")s", '"' + key + '"')
         self.entry.delete(0, tk.END)
         self.entry.insert(0, text)
-
-
-def restart(app):
-    app.write_config()
-    app = App()
-    app.mainloop()
 
 
 app = App()

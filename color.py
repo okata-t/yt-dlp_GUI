@@ -7,13 +7,15 @@ import customtkinter as ctk
 import matplotlib.colors as mcolors
 
 
-class App(ctk.CTk):
+class EditTheme(ctk.CTkToplevel):
     config = configparser.ConfigParser()
 
-    def __init__(self, appearance, theme, font):
+    def __init__(self, main, appearance, theme, font):
         super().__init__()
+        self.main = main
         self.title("テーマエディター")
         self.geometry("600x420")
+        self.after(100, self.focus)
         ctk.set_appearance_mode(appearance)
         try:
             ctk.set_default_color_theme(theme)
@@ -397,15 +399,4 @@ class App(ctk.CTk):
             self.config.write(f)
         with open("theme.json", "w") as f:
             json.dump(default_json, f, indent=4)
-        self.quit()
-        self.destroy()
-
-
-def main(appearance, theme, font):
-    app = App(appearance, theme, font)
-    app.protocol("WM_DELETE_WINDOW", lambda: [app.quit(), app.destroy()])
-    app.mainloop()
-
-
-if __name__ == "__main__":
-    main("System", "blue", ("游ゴシック", 15))
+        self.main.restart(self.main)
