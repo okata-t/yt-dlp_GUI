@@ -1,5 +1,4 @@
 import configparser
-import ctypes
 import datetime
 import io
 import math
@@ -21,6 +20,7 @@ import yt_dlp
 from bs4 import BeautifulSoup
 from packaging import version
 from PIL import Image
+from pystray import Icon, Menu, MenuItem
 from win11toast import toast
 
 import color
@@ -134,11 +134,13 @@ class App(ctk.CTk):
         menu_option = self.menu.add_cascade("設定", font=self.fonts)
         menu_view = self.menu.add_cascade("表示", font=self.fonts)
         menu_link = self.menu.add_cascade("リンクを開く", font=self.fonts)
+        menu_beta = self.menu.add_cascade("ベータ機能", font=self.fonts)
         menu_others = self.menu.add_cascade("その他", font=self.fonts)
 
         dropdown_option = CTkMenuBar.CustomDropdownMenu(menu_option, font=self.fonts)
         dropdown_view = CTkMenuBar.CustomDropdownMenu(menu_view, font=self.fonts)
         dropdown_link = CTkMenuBar.CustomDropdownMenu(menu_link, font=self.fonts)
+        dropdown_beta = CTkMenuBar.CustomDropdownMenu(menu_beta, font=self.fonts)
         dropdown_others = CTkMenuBar.CustomDropdownMenu(menu_others, font=self.fonts)
 
         submenu_cookie = dropdown_option.add_submenu("Cookie設定")
@@ -234,6 +236,8 @@ class App(ctk.CTk):
             command=lambda: webbrowser.open("https://www.twitch.tv"),
         )
 
+        dropdown_beta.add_option("クイックモード", command=self.start_quick)
+
         dropdown_others.add_option("アンインストール", command=self.uninstall)
 
     def restart(self, app):
@@ -246,7 +250,7 @@ class App(ctk.CTk):
             self.fix_config()
         self.config.read(self.ini_path, encoding="shift-jis")
 
-    def write_config(self):
+    def write_config(self, isQuick):
         with open(self.ini_path, "w") as f:
             self.config["Directory"]["lastdir"] = self.ent_savedir.get()
             self.config["Directory"]["filename"] = self.ent_filename.get()
@@ -257,7 +261,10 @@ class App(ctk.CTk):
             self.config["Option"]["extension"] = str(self.cmb_extension.get())
             self.config["Option"]["browser"] = self.browser
             self.config.write(f)
-        self.destroy()
+        if isQuick:
+            self.withdraw()
+        else:
+            self.destroy()
 
     def load_option(self):
         try:
@@ -765,6 +772,11 @@ class App(ctk.CTk):
         else:
             self.toplevel_window.focus()
 
+    def start_quick(self):
+        self.write_config(True)
+        thread = threading.Thread(target=QuickMode)
+        thread.start()
+
 
 class EditFilename(ctk.CTkToplevel):
     def __init__(self, master):
@@ -866,6 +878,25 @@ class EditFilename(ctk.CTkToplevel):
         self.entry.insert(0, text)
 
 
+class QuickMode:
+    def __init__(self):
+        image = Image.open("icon.ico")
+        menu = Menu(
+            MenuItem("ダウンロード", self.download, default=True),
+            MenuItem("クイックモードを終了する", self.quit),
+        )
+        self.icon = Icon(name="yt-dlp_GUI", icon=image, title="yt-dlp_GUI", menu=menu)
+        self.icon.run()
+
+    def quit(self):
+        app.deiconify()
+        self.icon.stop()
+
+    def download(self):
+        app.paste()
+        app.start_download()
+
+
 app = App()
-app.protocol("WM_DELETE_WINDOW", app.write_config)
+app.protocol("WM_DELETE_WINDOW", lambda: app.write_config(False))
 app.mainloop()
