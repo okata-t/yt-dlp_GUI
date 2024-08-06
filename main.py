@@ -529,8 +529,11 @@ class App(ctk.CTk):
         self.thread_info.start()
 
     def get_info(self):
+        opt = {}
         url = self.ent_url.get()
-        with yt_dlp.YoutubeDL() as ydl:
+        if self.browser != "":
+            opt["cookiesfrombrowser"] = (self.browser,)
+        with yt_dlp.YoutubeDL(opt) as ydl:
             try:
                 info = ydl.extract_info(url, download=False)
                 self.info = {
