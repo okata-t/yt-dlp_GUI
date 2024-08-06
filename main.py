@@ -1,4 +1,5 @@
 import configparser
+import ctypes
 import datetime
 import io
 import math
@@ -466,10 +467,12 @@ class App(ctk.CTk):
         )
         self.ent_duration_end = ctk.CTkEntry(self.frame_info, font=self.fonts, width=60)
 
-        self.lbl_progress = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
+        self.lbl_progress = ctk.CTkLabel(
+            self.frame_progress, text="\n", font=self.fonts
+        )
         self.lbl_progress.grid(row=0, column=0, padx=10, sticky="w")
 
-        self.lbl_eta = ctk.CTkLabel(self.frame_progress, text="", font=self.fonts)
+        self.lbl_eta = ctk.CTkLabel(self.frame_progress, text="\n", font=self.fonts)
         self.lbl_eta.grid(row=0, column=1, padx=10, sticky="e")
 
         self.pbar_progress = ctk.CTkProgressBar(self.frame_progress)
@@ -672,16 +675,18 @@ class App(ctk.CTk):
 
         self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
         self.download_finished = 1 if download_audio else 2
-        self.thread_download = threading.Thread(target=self.download, args=(url,))
+        self.thread_download = threading.Thread(
+            target=self.download, args=(url,), daemon=True
+        )
         self.thread_download.start()
 
     def download(self, url):
         self.pbar_progress.set(0)
-        self.lbl_progress.configure(text="準備中")
-        self.lbl_eta.configure(text="")
+        self.lbl_progress.configure(text="\n準備中")
+        self.lbl_eta.configure(text="\n")
         with yt_dlp.YoutubeDL(self.opt) as ydl:
             try:
-                ydl.download([url])
+                ydl.download(url)
             except Exception as e:
                 CTkMessagebox.CTkMessagebox(
                     title="エラーが発生しました",
@@ -691,6 +696,7 @@ class App(ctk.CTk):
                 )
 
     def progress_hook(self, d):
+        self.filename = d.get("filename", "***")
         if d["status"] == "downloading":
             self.set_progress(
                 self.download_finished,
@@ -698,12 +704,15 @@ class App(ctk.CTk):
                 d.get("total_bytes_estimate", None),
                 d.get("speed", None),
                 d.get("eta", None),
+                self.filename,
             )
 
         elif d["status"] == "finished":
             self.download_finished -= 1
 
-    def set_progress(self, downloading, downloaded_bytes, total_bytes, speed, eta):
+    def set_progress(
+        self, downloading, downloaded_bytes, total_bytes, speed, eta, filename
+    ):
         if downloading == 2:
             downloading_text = "動画"
         else:
@@ -714,7 +723,9 @@ class App(ctk.CTk):
 
         self.lbl_progress.configure(
             text=(
-                downloading_text
+                filename
+                + "\n"
+                + downloading_text
                 + "をダウンロード中："
                 + str(round((downloaded_bytes / total_bytes * 100), 1))
                 + "% / "
@@ -728,7 +739,7 @@ class App(ctk.CTk):
             eta = "..."
         else:
             eta = str(datetime.timedelta(seconds=round(float(eta))))
-        self.lbl_eta.configure(text="残り " + eta)
+        self.lbl_eta.configure(text="\n残り " + eta)
         self.pbar_progress.set(downloaded_bytes / total_bytes)
 
     def convert_size(self, size):
@@ -739,13 +750,13 @@ class App(ctk.CTk):
 
     def postprocessor_hook(self, d):
         if d["status"] == "started":
-            self.lbl_progress.configure(text="処理中")
-            self.lbl_eta.configure(text="")
+            self.lbl_progress.configure(text=self.filename + "\n処理中")
+            self.lbl_eta.configure(text="\n")
 
         elif d["status"] == "finished":
             if d["postprocessor"] == "MoveFiles":
-                self.lbl_progress.configure(text="ダウンロード完了")
-                self.lbl_eta.configure(text="")
+                self.lbl_progress.configure(text=self.filename + "\nダウンロード完了")
+                self.lbl_eta.configure(text="\n")
                 toast("yt-dlp_GUI", "ダウンロードが完了しました")
 
     def edit_filename(self):
