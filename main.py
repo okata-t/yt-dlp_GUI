@@ -990,8 +990,7 @@ class QuickMode:
         app.start_download()
 
     def exit(self):
-        sys.exit()
-
+        os._exit(-1)
 
 app = App()
 app.protocol("WM_DELETE_WINDOW", lambda: app.write_config(False))
