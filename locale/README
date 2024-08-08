@@ -1,0 +1,5 @@
+Pythonをインストールしているフォルダ内のTools/msgfmt.pyを作業ディレクトリにコピーし、
+
+python msggfmt.py locale/"言語id"/LCMESSAGES/messages.po
+
+とコマンドを実行してください

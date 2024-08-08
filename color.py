@@ -1,5 +1,6 @@
 import colorsys
 import configparser
+import gettext
 import json
 import tkinter as tk
 
@@ -8,13 +9,22 @@ import matplotlib.colors as mcolors
 
 
 class EditTheme(ctk.CTkToplevel):
+
     config = configparser.ConfigParser()
 
-    def __init__(self, main, appearance, theme, font):
+    def __init__(self, main, appearance, theme, font, language):
         super().__init__()
+        _ = gettext.translation(
+            domain="messages",
+            localedir="locale",
+            languages=[language],
+            fallback=True,
+        ).gettext
+
         self.main = main
-        self.title("テーマエディター")
+        self.title(_("テーマエディター"))
         self.geometry("600x420")
+        self.iconbitmap("icon.ico")
         self.after(100, self.focus)
         ctk.set_appearance_mode(appearance)
         try:
@@ -24,7 +34,7 @@ class EditTheme(ctk.CTkToplevel):
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        self.font = font
+        self.fonts = font
         self.config.read("color.ini", encoding="shift-jis")
         # color list
         try:
@@ -84,8 +94,8 @@ class EditTheme(ctk.CTkToplevel):
 
         # frame[0] - Slider for selecting color
         self.label_hsv = [
-            ctk.CTkLabel(self.frame[0], text=f"{item}")
-            for item in ["色相", "彩度", "明度"]
+            ctk.CTkLabel(self.frame[0], text=f"{item}", font=self.fonts)
+            for item in [_("色相"), _("彩度"), _("明度")]
         ]
         self.slider_hsv = [
             ctk.CTkSlider(
@@ -120,8 +130,9 @@ class EditTheme(ctk.CTkToplevel):
             self.frame[1],
             anchor="center",
             corner_radius=6,
-            text="現在のテーマ",
+            text=_("現在のテーマ"),
             fg_color=self.current_color[0],
+            font=self.fonts,
         )
         self.label_color1.grid(
             row=0, column=0, columnspan=2, padx=(10, 3), pady=(10, 3), sticky="ew"
@@ -130,7 +141,8 @@ class EditTheme(ctk.CTkToplevel):
             self.frame[1],
             corner_radius=6,
             fg_color=self.current_color[0],
-            text="新規テーマ",
+            text=_("新規テーマ"),
+            font=self.fonts,
         )
         self.label_color2.grid(
             row=0, column=2, columnspan=2, padx=(3, 10), pady=(10, 3), sticky="ew"
@@ -157,8 +169,8 @@ class EditTheme(ctk.CTkToplevel):
 
         self.save_button = ctk.CTkButton(
             self.frame[2],
-            text="テーマを適用",
-            font=self.font,
+            text=_("テーマを適用"),
+            font=self.fonts,
             command=self.save_json,
         )
         self.save_button.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
