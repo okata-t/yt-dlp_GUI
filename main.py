@@ -1,9 +1,9 @@
 import configparser
 import datetime
+import gettext
 import io
 import math
 import os
-import time
 import subprocess
 import sys
 import threading
@@ -26,29 +26,41 @@ from win11toast import toast
 
 import color
 
+VERSION = "v2.5.0"
 
 config = configparser.ConfigParser(interpolation=None)
-lang = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
-lang_path = "language.ini"
+
+default_config = [
+    ("Directory", "lastdir", os.path.join(os.path.expanduser("~"), "Downloads")),
+    ("Directory", "filename", ""),
+    ("Option", "language", "jp"),
+    ("Option", "appearance", "System"),
+    ("Option", "download_audio", "0"),
+    ("Option", "embed_thumbnail", "0"),
+    ("Option", "extension", "mp4"),
+    ("Option", "browser", ""),
+]
+
+
+def read_config():
+    if not os.path.exists(ini_path):
+        fix_config()
+    config.read(ini_path, encoding="shift-jis")
+
+
+def fix_config():
+    for section, key, value in default_config:
+        if not config.has_section(section):
+            config[section] = {}
+        if not config.has_option(section, key):
+            config[section][key] = value
+    with open(ini_path, "w") as f:
+        config.write(f)
+    read_config()
+
 
 class App(ctk.CTk):
-    #多分これimportの後に指定してselfつけずに使った方が扱いやすい、けど修正めんどくさいから放置してる
-    config = configparser.ConfigParser(interpolation=None)
-    lang = configparser.ConfigParser(interpolation=None)
-    ini_path = "config.ini"
-    lang_path = "language.ini"
-
-    default_config = [
-        ("Directory", "lastdir", os.path.join(os.path.expanduser("~"), "Downloads")),
-        ("Directory", "filename", ""),
-        ("Option", "appearance", "System"),
-        ("Option", "download_audio", "0"),
-        ("Option", "embed_thumbnail", "0"),
-        ("Option", "extension", "mp4"),
-        ("Option", "browser", ""),
-        ("Option", "language", "JP"),
-    ]
 
     def __init__(self):
         super().__init__()
@@ -56,29 +68,23 @@ class App(ctk.CTk):
         # Windowsのテーマ色設定。"Light" or "Dark"
         self.color_mode = darkdetect.theme()
 
-        ver = configparser.ConfigParser()
-        ver.read("version.ini", encoding="shift-jis")
-        this_version = ver["Version"]["version"]
         ctk.set_appearance_mode("System")
         try:
             ctk.set_default_color_theme("theme.json")
         except FileNotFoundError:
             ctk.set_default_color_theme("blue")
         self.fonts = ("游ゴシック", 15)
-        self.title("yt-dlp_GUI " + this_version)
+        self.title("yt-dlp_GUI " + VERSION)
         self.iconbitmap("icon.ico")
-
-        #言語設定の読み込み
-        self.read_config()
-        self.lang_name = self.config["Option"]["language"]
-        self.lang.read(self.lang_path, encoding="UTF-8")
 
         self.create_menu()
         self.setup()
         self.load_option()
-        self.check_version(this_version)
+
+        self.check_version(VERSION)
         self.check_option()
         self.select_appearance(self.appearance)
+        self.set_submenu_color(self.languages, self.dict_language, self.language)
         self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
         self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
 
@@ -98,21 +104,20 @@ class App(ctk.CTk):
 
         if version.parse(this_version) < version.parse(latest_version):
             msg = CTkMessagebox.CTkMessagebox(
-                title = self.lang[self.lang_name]["UpM_title"],
-                message = self.lang[self.lang_name]["UpM_message"]
+                title=_("アップデート"),
+                message=_("新しいバージョン：")
                 + latest_version
-                + "\n"
-                + self.lang[self.lang_name]["UpM_main_message"],
+                + _("\nが公開されました。\nダウンロードしますか？"),
                 icon="info",
                 font=self.fonts,
-                option_1 = self.lang[self.lang_name]["UpM_option1"],
-                option_2 = self.lang[self.lang_name]["UpM_option2"],
-                option_3 = self.lang[self.lang_name]["UpM_option3"],
+                option_1=_("キャンセル"),
+                option_2=_("ダウンロード"),
+                option_3=_("GitHubへ"),
             )
-            if msg.get() == self.lang["JP"]["UpM_option3"]:
+            if msg.get() == _("GitHubへ"):
                 webbrowser.open("https://github.com/okata-t/yt-dlp_GUI/releases/latest")
                 sys.exit()
-            elif msg.get() == self.lang["JP"]["UpM_option2"]:
+            elif msg.get() == _("ダウンロード"):
                 webbrowser.open(
                     "https://github.com/okata-t/yt-dlp_GUI/releases/"
                     + "latest/download/yt-dlp_GUI_Setup.exe"
@@ -121,34 +126,18 @@ class App(ctk.CTk):
 
     def uninstall(self):
         msg = CTkMessagebox.CTkMessagebox(
-            title = self.lang[self.lang_name]["UnM_title"],
-            message = self.lang[self.lang_name]["UnM_message"],
-            icon = "info",
-            font = self.fonts,
-            option_1 = self.lang[self.lang_name]["UnM_option1"],
-            option_2 = self.lang[self.lang_name]["UnM_option2"],
+            title=_("アンインストール"),
+            message=_("本当にアンインストールしますか？"),
+            icon="info",
+            font=self.fonts,
+            option_1=_("キャンセル"),
+            option_2=_("アンインストール"),
         )
-        if msg.get() == self.lang[self.lang_name]["UnM_option2"]:
+        if msg.get() == _("アンインストール"):
             os.remove("config.ini")
             cp = subprocess.run("start unins000.exe", shell=True)
             if cp.returncode == 0:
                 sys.exit()
-
-    #言語設定の変更
-    def lang_change(self, lang):
-        self.lang_name = lang
-        msg = CTkMessagebox.CTkMessagebox(
-            title = self.lang[self.lang_name]["CLM_title"],
-            message = self.lang[self.lang_name]["CLM_message"],
-            icon = "info",
-            font = self.fonts,
-            option_1 = self.lang[self.lang_name]["CLM_option1"],
-            option_2 = self.lang[self.lang_name]["CLM_option2"],
-        )
-        if msg.get() == self.lang[self.lang_name]["CLM_option2"]:
-            self.write_config(True)
-            time.sleep(0.1)  # 2秒待機
-            os.execv(sys.executable, ['python', sys.argv[0]])
 
     # メニューバーを追加
     def create_menu(self):
@@ -162,11 +151,11 @@ class App(ctk.CTk):
         self.menu = CTkMenuBar.CTkMenuBar(self, bg_color=self.color_menubar)
         self.pack_propagate(0)
 
-        menu_option = self.menu.add_cascade(self.lang[self.lang_name]["MB_option"], font=self.fonts)
-        menu_view = self.menu.add_cascade(self.lang[self.lang_name]["MB_view"], font=self.fonts)
-        menu_link = self.menu.add_cascade(self.lang[self.lang_name]["MB_link"], font=self.fonts)
-        menu_beta = self.menu.add_cascade(self.lang[self.lang_name]["MB_beta"], font=self.fonts)
-        menu_others = self.menu.add_cascade(self.lang[self.lang_name]["MB_others"], font=self.fonts)
+        menu_option = self.menu.add_cascade(_("設定"), font=self.fonts)
+        menu_view = self.menu.add_cascade(_("表示"), font=self.fonts)
+        menu_link = self.menu.add_cascade(_("リンクを開く"), font=self.fonts)
+        menu_beta = self.menu.add_cascade(_("ベータ"), font=self.fonts)
+        menu_others = self.menu.add_cascade(_("その他"), font=self.fonts)
 
         dropdown_option = CTkMenuBar.CustomDropdownMenu(menu_option, font=self.fonts)
         dropdown_view = CTkMenuBar.CustomDropdownMenu(menu_view, font=self.fonts)
@@ -174,10 +163,10 @@ class App(ctk.CTk):
         dropdown_beta = CTkMenuBar.CustomDropdownMenu(menu_beta, font=self.fonts)
         dropdown_others = CTkMenuBar.CustomDropdownMenu(menu_others, font=self.fonts)
 
-        submenu_cookie = dropdown_option.add_submenu(self.lang[self.lang_name]["MB_cookie"])
+        submenu_cookie = dropdown_option.add_submenu(_("Cookie設定"))
         self.cookies = []
         self.dict_browser = {
-            self.lang[self.lang_name]["MB_cookie_none"]: "",
+            _("なし"): "",
             "Brave": "brave",
             "Google Chrome": "chrome",
             "Microsoft Edge": "edge",
@@ -186,8 +175,7 @@ class App(ctk.CTk):
             "Vivaldi": "vivaldi",
         }
         self.cookies.append(
-            submenu_cookie.add_option(
-                self.lang[self.lang_name]["MB_cookie_none"], command=lambda: self.select_cookie(""))
+            submenu_cookie.add_option(_("なし"), command=lambda: self.select_cookie(""))
         )
         self.cookies.append(
             submenu_cookie.add_option(
@@ -220,58 +208,51 @@ class App(ctk.CTk):
             )
         )
 
-        submenu_cookie = dropdown_option.add_submenu(self.lang[self.lang_name]["MB_language"])
-        self.cookies = []
-        self.dict_browser = {
-            self.lang[self.lang_name]["MB_lang_EN"]: "EN",
-            self.lang[self.lang_name]["MB_lang_JP"]: "JP",
+        self.submenu_language = dropdown_view.add_submenu(_("言語"))
+        self.languages = []
+        self.dict_language = {
+            _("日本語"): "jp",
+            _("English"): "en",
         }
-        self.cookies.append(
-            submenu_cookie.add_option(
-                self.lang[self.lang_name]["MB_lang_EN"], command=lambda: self.lang_change("EN")
+        self.languages.append(
+            self.submenu_language.add_option(
+                _("日本語"), command=lambda: self.select_language("jp")
             )
         )
-        self.cookies.append(
-            submenu_cookie.add_option(
-                self.lang[self.lang_name]["MB_lang_JP"], command=lambda: self.lang_change("JP")
+        self.languages.append(
+            self.submenu_language.add_option(
+                _("English"), command=lambda: self.select_language("en")
             )
         )
-        """
-        self.cookies.append(
-            submenu_cookie.add_option(
-                self.lang[self.lang_name]["MB_lang_KR"], command=lambda: self.lang_change("KR")
-            )
-        )
-        """
 
-        self.submenu_appearance = dropdown_view.add_submenu(self.lang[self.lang_name]["MB_theme"])
+        self.submenu_appearance = dropdown_view.add_submenu(_("外観"))
         self.appearances = []
         self.dict_appearance = {
-            self.lang[self.lang_name]["MB_theme_system"]: "System",
-            self.lang[self.lang_name]["MB_theme_dark"]: "Dark",
-            self.lang[self.lang_name]["MB_theme_light"]: "Light",
+            _("システム(メニューバーは再起動時反映)"): "System",
+            _("ダーク"): "Dark",
+            _("ライト"): "Light",
         }
         self.appearances.append(
             self.submenu_appearance.add_option(
-                self.lang[self.lang_name]["MB_theme_system"],
+                _("システム(メニューバーは再起動時反映)"),
                 command=lambda: self.select_appearance("System"),
             )
         )
         self.appearances.append(
             self.submenu_appearance.add_option(
-                self.lang[self.lang_name]["MB_theme_dark"], command=lambda: self.select_appearance("Dark")
+                _("ダーク"), command=lambda: self.select_appearance("Dark")
             )
         )
         self.appearances.append(
             self.submenu_appearance.add_option(
-                self.lang[self.lang_name]["MB_theme_light"], command=lambda: self.select_appearance("Light")
+                _("ライト"), command=lambda: self.select_appearance("Light")
             )
         )
 
         dropdown_view.add_option(
-            self.lang[self.lang_name]["MB_theme_edit"],
+            _("テーマエディタを開く"),
             command=lambda: color.EditTheme(
-                self, self.color_mode, "theme.json", self.fonts
+                self, self.color_mode, "theme.json", self.fonts, self.language
             ),
         )
 
@@ -284,7 +265,7 @@ class App(ctk.CTk):
             command=lambda: webbrowser.open("https://www.youtube.com"),
         )
         dropdown_link.add_option(
-            self.lang[self.lang_name]["MB_link_niconico"],
+            "ニコニコ動画",
             command=lambda: webbrowser.open("https://www.nicovideo.jp"),
         )
         dropdown_link.add_option(
@@ -292,32 +273,28 @@ class App(ctk.CTk):
             command=lambda: webbrowser.open("https://www.twitch.tv"),
         )
 
-        dropdown_beta.add_option(self.lang[self.lang_name]["MB_quickmode"], command=self.start_quick)
+        dropdown_beta.add_option(_("クイックモード"), command=self.start_quick)
 
-        dropdown_others.add_option(self.lang[self.lang_name]["MB_uninstall"], command=self.uninstall)
+        dropdown_others.add_option(_("アンインストール"), command=self.uninstall)
 
     def restart(self, app):
-        app.write_config()
+        app.write_config(False)
         app = App()
+        app.protocol("WM_DELETE_WINDOW", lambda: app.write_config(False))
         app.mainloop()
 
-    def read_config(self):
-        if not os.path.exists(self.ini_path):
-            self.fix_config()
-        self.config.read(self.ini_path, encoding="shift-jis")
-
     def write_config(self, isQuick):
-        with open(self.ini_path, "w") as f:
-            self.config["Directory"]["lastdir"] = self.ent_savedir.get()
-            self.config["Directory"]["filename"] = self.ent_filename.get()
-            self.config["Option"] = {}
-            self.config["Option"]["appearance"] = self.appearance
-            self.config["Option"]["download_audio"] = str(self.chk_audio.get())
-            self.config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
-            self.config["Option"]["extension"] = str(self.cmb_extension.get())
-            self.config["Option"]["browser"] = self.browser
-            self.config["Option"]["language"] = self.lang_name
-            self.config.write(f)
+        with open(ini_path, "w") as f:
+            config["Directory"]["lastdir"] = self.ent_savedir.get()
+            config["Directory"]["filename"] = self.ent_filename.get()
+            config["Option"] = {}
+            config["Option"]["language"] = self.language
+            config["Option"]["appearance"] = self.appearance
+            config["Option"]["download_audio"] = str(self.chk_audio.get())
+            config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
+            config["Option"]["extension"] = str(self.cmb_extension.get())
+            config["Option"]["browser"] = self.browser
+            config.write(f)
         if isQuick:
             self.withdraw()
         else:
@@ -325,25 +302,15 @@ class App(ctk.CTk):
 
     def load_option(self):
         try:
-            self.appearance = self.config["Option"]["appearance"]
-            self.var_chk_audio.set(self.config["Option"]["download_audio"])
-            self.var_chk_thumbnail.set(self.config["Option"]["embed_thumbnail"])
-            self.cmb_extension.set(self.config["Option"]["extension"])
-            self.browser = self.config["Option"]["browser"]
-            self.lang_name = self.config["Option"]["language"]
+            self.language = config["Option"]["language"]
+            self.appearance = config["Option"]["appearance"]
+            self.var_chk_audio.set(config["Option"]["download_audio"])
+            self.var_chk_thumbnail.set(config["Option"]["embed_thumbnail"])
+            self.cmb_extension.set(config["Option"]["extension"])
+            self.browser = config["Option"]["browser"]
         except KeyError:
             self.fix_config()
             self.load_option()
-
-    def fix_config(self):
-        for section, key, value in self.default_config:
-            if not self.config.has_section(section):
-                self.config[section] = {}
-            if not self.config.has_option(section, key):
-                self.config[section][key] = value
-        with open(self.ini_path, "w") as f:
-            self.config.write(f)
-        self.read_config()
 
     def check_option(self, *args):
         if self.var_chk_audio.get():
@@ -382,6 +349,17 @@ class App(ctk.CTk):
         self.browser = browser
         self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
 
+    def select_language(self, language):
+        self.language = language
+        global _
+        _ = gettext.translation(
+            domain="messages",
+            localedir="locale",
+            languages=[language],
+            fallback=True,
+        ).gettext
+        self.restart(self)
+
     def select_appearance(self, appearance):
         self.appearance = appearance if appearance != "" else "System"
         ctk.set_appearance_mode(self.appearance)
@@ -398,13 +376,11 @@ class App(ctk.CTk):
         self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
 
     def set_submenu_color(self, submenu, dict, option):
-        """
         for c in submenu:
             if c.cget("option") == [k for k, v in dict.items() if v == option][0]:
                 c.configure(fg_color=self.color_selected)
             else:
                 c.configure(fg_color="transparent")
-        """
 
     def setup(self):
         self.toplevel_window = None
@@ -438,7 +414,7 @@ class App(ctk.CTk):
         self.btn_paste = ctk.CTkButton(
             self.frame_main,
             width=100,
-            text=self.lang[self.lang_name]["w_paste"],
+            text=_("ペースト"),
             command=self.paste,
             font=self.fonts,
         )
@@ -451,19 +427,19 @@ class App(ctk.CTk):
 
         self.ent_savedir = ctk.CTkEntry(
             self.frame_main,
-            placeholder_text=self.lang[self.lang_name]["w_savefolder"],
+            placeholder_text=_("保存先フォルダ"),
             font=self.fonts,
         )
         self.ent_savedir.grid(
             row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew"
         )
-        if self.config["Directory"]["lastdir"] != "":
-            self.ent_savedir.insert(0, self.config["Directory"]["lastdir"])
+        if config["Directory"]["lastdir"] != "":
+            self.ent_savedir.insert(0, config["Directory"]["lastdir"])
 
         self.btn_savedir = ctk.CTkButton(
             self.frame_main,
             width=100,
-            text=self.lang[self.lang_name]["w_browse"],
+            text=_("参照"),
             command=self.savedir,
             font=self.fonts,
         )
@@ -472,7 +448,7 @@ class App(ctk.CTk):
         self.btn_editname = ctk.CTkButton(
             self.frame_main,
             width=10,
-            text=self.lang[self.lang_name]["w_edit"],
+            text=_("編集"),
             font=self.fonts,
             text_color=self.color_edit,
             fg_color="transparent",
@@ -488,17 +464,17 @@ class App(ctk.CTk):
 
         self.ent_filename = ctk.CTkEntry(
             self.frame_main,
-            placeholder_text=self.lang[self.lang_name]["w_save_filename"],
+            placeholder_text=_("保存ファイル名(空白ならタイトル)"),
             font=self.fonts,
         )
         self.ent_filename.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
-        if self.config["Directory"]["filename"] != "":
-            self.ent_filename.insert(0, self.config["Directory"]["filename"])
+        if config["Directory"]["filename"] != "":
+            self.ent_filename.insert(0, config["Directory"]["filename"])
 
         self.btn_download = ctk.CTkButton(
             self.frame_main,
             width=100,
-            text=self.lang[self.lang_name]["w_download"],
+            text=_("ダウンロード"),
             command=self.start_download,
             font=self.fonts,
         )
@@ -509,7 +485,7 @@ class App(ctk.CTk):
         self.btn_info = ctk.CTkButton(
             self.frame_info,
             width=100,
-            text=self.lang[self.lang_name]["w_get_videoinfo"],
+            text=_("動画情報の取得"),
             font=self.fonts,
             command=self.start_get_info,
         )
@@ -521,7 +497,7 @@ class App(ctk.CTk):
         self.var_chk_duration = ctk.BooleanVar()
         self.chk_duration = ctk.CTkCheckBox(
             self.frame_info,
-            text=self.lang[self.lang_name]["w_download_range"],
+            text=_("範囲指定でダウンロード"),
             font=self.fonts,
             variable=self.var_chk_duration,
             command=self.check_option,
@@ -551,7 +527,7 @@ class App(ctk.CTk):
         self.var_chk_audio = ctk.BooleanVar()
         self.chk_audio = ctk.CTkCheckBox(
             self.frame_option,
-            text=self.lang[self.lang_name]["w_only_voice"],
+            text=_("音声のみダウンロード"),
             font=self.fonts,
             command=lambda: [
                 self.check_option(),
@@ -564,7 +540,7 @@ class App(ctk.CTk):
         self.var_chk_thumbnail = ctk.BooleanVar()
         self.chk_thumbnail = ctk.CTkCheckBox(
             self.frame_option,
-            text=self.lang[self.lang_name]["w_embed_thumbnail"],
+            text=_("サムネイルを埋め込む"),
             font=self.fonts,
             variable=self.var_chk_thumbnail,
         )
@@ -589,7 +565,7 @@ class App(ctk.CTk):
         self.ent_url.insert(0, clip_text)
 
     def savedir(self):
-        inidir = self.config["Directory"]["lastdir"]
+        inidir = config["Directory"]["lastdir"]
         file_path = filedialog.askdirectory(initialdir=inidir)
         self.ent_savedir.delete(0, tk.END)
         self.ent_savedir.insert(0, file_path)
@@ -653,7 +629,7 @@ class App(ctk.CTk):
 
             except Exception as e:
                 CTkMessagebox.CTkMessagebox(
-                    title=self.lang[self.lang_name]["w_error_occured"],
+                    title=_("エラーが発生しました"),
                     message=e,
                     icon="cancel",
                     font=self.fonts,
@@ -672,17 +648,17 @@ class App(ctk.CTk):
 
         if url == "":
             CTkMessagebox.CTkMessagebox(
-                title=self.lang[self.lang_name]["w_error"],
-                message=self.lang[self.lang_name]["we_input_url"],
-                icon=self.lang[self.lang_name]["we_cancel"],
+                title=_("エラー"),
+                message=_("URLを入力してください"),
+                icon="cancel",
                 font=self.fonts,
             )
             return
         if file_path == "":
             CTkMessagebox.CTkMessagebox(
-                title=self.lang[self.lang_name]["w_error"],
-                message=self.lang[self.lang_name]["w_specify_folder"],
-                icon=self.lang[self.lang_name]["we_cancel"],
+                title=_("エラー"),
+                message=_("保存フォルダを指定してください"),
+                icon="cancel",
                 font=self.fonts,
             )
             return
@@ -749,17 +725,16 @@ class App(ctk.CTk):
 
     def download(self, url):
         self.pbar_progress.set(0)
-        lbl = "\n" + self.lang[self.lang_name]["w_prepare"]
-        self.lbl_progress.configure(text=lbl)
+        self.lbl_progress.configure(text=_("\n準備中"))
         self.lbl_eta.configure(text="\n")
         with yt_dlp.YoutubeDL(self.opt) as ydl:
             try:
                 ydl.download(url)
             except Exception as e:
                 CTkMessagebox.CTkMessagebox(
-                    title=self.lang[self.lang_name]["w_error_occured"],
+                    title=_("エラーが発生しました"),
                     message=e,
-                    icon=self.lang[self.lang_name]["we_cancel"],
+                    icon="cancel",
                     font=self.fonts,
                 )
 
@@ -782,9 +757,9 @@ class App(ctk.CTk):
         self, downloading, downloaded_bytes, total_bytes, speed, eta, filename
     ):
         if downloading == 2:
-            downloading_text = self.lang[self.lang_name]["w_downloading_video"]
+            downloading_text = _("動画")
         else:
-            downloading_text = self.lang[self.lang_name]["w_downloading_sound"]
+            downloading_text = _("音声")
 
         if total_bytes is None:
             total_bytes = downloaded_bytes
@@ -793,9 +768,8 @@ class App(ctk.CTk):
             text=(
                 filename
                 + "\n"
-                + self.lang[self.lang_name]["w_downloading"]
                 + downloading_text
-                + " "
+                + _("をダウンロード中：")
                 + str(round((downloaded_bytes / total_bytes * 100), 1))
                 + "% / "
                 + self.convert_size(total_bytes)
@@ -808,14 +782,7 @@ class App(ctk.CTk):
             eta = "..."
         else:
             eta = str(datetime.timedelta(seconds=round(float(eta))))
-
-        #英語の場合は"○○MB left"と表示させ、それ以外の言語では"残り○○MB"のように表示
-        if self.lang_name == "EN":
-            lbl_rem = "\n" + eta + self.lang[self.lang_name]["w_left"]
-        else:
-            lbl_rem = "\n" + self.lang[self.lang_name]["w_left"] + eta
-
-        self.lbl_eta.configure(text = lbl_rem)
+        self.lbl_eta.configure(text=_("\n残り ") + eta)
         self.pbar_progress.set(downloaded_bytes / total_bytes)
 
     def convert_size(self, size):
@@ -826,16 +793,16 @@ class App(ctk.CTk):
 
     def postprocessor_hook(self, d):
         if d["status"] == "started":
-            lbl_pro = "\n" + self.lang[self.lang_name]["w_processing"]
-            self.lbl_progress.configure(text=self.filename + lbl_pro)
+            self.lbl_progress.configure(text=self.filename + _("\n処理中"))
             self.lbl_eta.configure(text="\n")
 
         elif d["status"] == "finished":
             if d["postprocessor"] == "MoveFiles":
-                lbl_comp = "\n" + self.lang[self.lang_name]["w_comp_download"]
-                self.lbl_progress.configure(text=self.filename + lbl_comp)
+                self.lbl_progress.configure(
+                    text=self.filename + _("\nダウンロード完了")
+                )
                 self.lbl_eta.configure(text="\n")
-                toast("yt-dlp_GUI", self.lang[self.lang_name]["w_download_comp"])
+                toast("yt-dlp_GUI", _("ダウンロードが完了しました"))
 
     def edit_filename(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -850,36 +817,25 @@ class App(ctk.CTk):
 
 
 class EditFilename(ctk.CTkToplevel):
-    config = configparser.ConfigParser(interpolation=None)
-    lang = configparser.ConfigParser(interpolation=None)
-    ini_path = "config.ini"
-    lang_path = "language.ini"
-
     def __init__(self, master):
         super().__init__(master)
-
-        #言語設定の読み込み準備
-        self.config.read(self.ini_path, encoding="shift-jis")
-        self.lang_name = self.config["Option"]["language"]
-        self.lang.read(self.lang_path, encoding="UTF-8")
-
         self.fonts = ("游ゴシック", 15)
-        self.title(self.lang[self.lang_name]["ef_edit_filename"])
+        self.title(_("ファイル名テンプレートの編集"))
         self.after(100, self.focus)
 
         self.dict = {
             "ID": "id",
-            self.lang[self.lang_name]["ef_title"]: "title",
+            _("タイトル"): "title",
             "URL": "url",
-            self.lang[self.lang_name]["ef_creator"]: "uploader",
-            self.lang[self.lang_name]["ef_creator_id"]: "uploader_id",
-            self.lang[self.lang_name]["ef_upload_date"]: "upload_date",
-            self.lang[self.lang_name]["ef_width_videosize"]: "width",
-            self.lang[self.lang_name]["ef_height_videosize"]: "height",
+            _("投稿者"): "uploader",
+            _("投稿者ID"): "uploader_id",
+            _("投稿日"): "upload_date",
+            _("動画サイズ縦"): "width",
+            _("動画サイズ横"): "height",
             "FPS": "fps",
-            self.lang[self.lang_name]["ef_domain"]: "extractor",
-            self.lang[self.lang_name]["ef_playlist_name"]: "playlist",
-            self.lang[self.lang_name]["ef_playlist_num"]: "playlist_index",
+            _("サイトドメイン"): "extractor",
+            _("プレイリスト名"): "playlist",
+            _("プレイリスト内番号"): "playlist_index",
         }
 
         self.frame_entry = ctk.CTkFrame(self)
@@ -898,7 +854,7 @@ class EditFilename(ctk.CTkToplevel):
         self.apply = ctk.CTkButton(
             self.frame_entry,
             font=self.fonts,
-            text=self.lang[self.lang_name]["ef_apply"],
+            text=_("適用"),
             width=30,
             command=self.apply_text,
         )
@@ -917,18 +873,18 @@ class EditFilename(ctk.CTkToplevel):
         ]
 
         self.btn[0][0] = self.make_btn(0, 0, "ID")
-        self.btn[0][1] = self.make_btn(0, 1, self.lang[self.lang_name]["ef_title"])
-        self.btn[0][2] = self.make_btn(0, 2, self.lang[self.lang_name]["ef_creator"])
-        self.btn[0][3] = self.make_btn(0, 3, self.lang[self.lang_name]["ef_creator_id"])
-        self.btn[1][0] = self.make_btn(1, 0, self.lang[self.lang_name]["ef_upload_date"])
-        self.btn[1][1] = self.make_btn(1, 1, self.lang[self.lang_name]["ef_width_videosize"])
-        self.btn[1][2] = self.make_btn(1, 2, self.lang[self.lang_name]["ef_height_videosize"])
+        self.btn[0][1] = self.make_btn(0, 1, _("タイトル"))
+        self.btn[0][2] = self.make_btn(0, 2, _("投稿者"))
+        self.btn[0][3] = self.make_btn(0, 3, _("投稿者ID"))
+        self.btn[1][0] = self.make_btn(1, 0, _("投稿日"))
+        self.btn[1][1] = self.make_btn(1, 1, _("動画サイズ縦"))
+        self.btn[1][2] = self.make_btn(1, 2, _("動画サイズ横"))
         self.btn[1][3] = self.make_btn(1, 3, "FPS")
-        self.btn[2][0] = self.make_btn(2, 0, self.lang[self.lang_name]["ef_domain"])
-        self.btn[2][1] = self.make_btn(2, 1, self.lang[self.lang_name]["ef_playlist_name"])
-        self.btn[2][2] = self.make_btn(2, 2, self.lang[self.lang_name]["ef_playlist_num"])
+        self.btn[2][0] = self.make_btn(2, 0, _("サイトドメイン"))
+        self.btn[2][1] = self.make_btn(2, 1, _("プレイリスト名"))
+        self.btn[2][2] = self.make_btn(2, 2, _("プレイリスト内番号"))
         self.btn[2][3].configure(
-            command=lambda: self.entry.delete(0, ctk.END), text=self.lang[self.lang_name]["ef_clear"]
+            command=lambda: self.entry.delete(0, ctk.END), text=_("クリア")
         )
         self.btn[2][3].grid(row=2, column=3, padx=10, pady=10, sticky="nsew")
 
@@ -961,22 +917,12 @@ class EditFilename(ctk.CTkToplevel):
 
 
 class QuickMode:
-    config = configparser.ConfigParser(interpolation=None)
-    lang = configparser.ConfigParser(interpolation=None)
-    ini_path = "config.ini"
-    lang_path = "language.ini"
-
     def __init__(self):
-        #言語設定の読み込み準備
-        self.config.read(self.ini_path, encoding="shift-jis")
-        self.lang_name = self.config["Option"]["language"]
-        self.lang.read(self.lang_path, encoding="UTF-8")
-
         image = Image.open("icon.ico")
         menu = Menu(
-            MenuItem(self.lang[self.lang_name]["qm_download"], self.download, default=True),
-            MenuItem(self.lang[self.lang_name]["qm_quit_quickmode"], self.quit),
-            MenuItem(self.lang[self.lang_name]["qm_quit_app"], self.exit),
+            MenuItem(_("ダウンロード"), self.download, default=True),
+            MenuItem(_("クイックモードを終了する"), self.quit),
+            MenuItem(_("yt-dlp_GUIを終了する"), lambda: os._exit(-1)),
         )
         self.icon = Icon(name="yt-dlp_GUI", icon=image, title="yt-dlp_GUI", menu=menu)
         self.icon.run()
@@ -989,9 +935,22 @@ class QuickMode:
         app.paste()
         app.start_download()
 
-    def exit(self):
-        os._exit(-1)
 
-app = App()
-app.protocol("WM_DELETE_WINDOW", lambda: app.write_config(False))
-app.mainloop()
+if __name__ == "__main__":
+    read_config()
+    try:
+        language = config["Option"]["language"]
+    except KeyError:
+        fix_config()
+        language = config["Option"]["language"]
+
+    _ = gettext.translation(
+        domain="messages",
+        localedir="locale",
+        languages=[language],
+        fallback=True,
+    ).gettext
+
+    app = App()
+    app.protocol("WM_DELETE_WINDOW", lambda: app.write_config(False))
+    app.mainloop()

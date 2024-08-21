@@ -166,3 +166,5 @@ icon.png
 *.iss
 theme.json
 color.ini
+msgfmt.py
+pygettext.py
