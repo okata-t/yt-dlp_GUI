@@ -10,282 +10,282 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=cp932\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
 
 #: color.py:25
-msgid "ƒe[ƒ}ƒGƒfƒBƒ^["
-msgstr "?? ???"
+msgid "ãƒ†ãƒ¼ãƒã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼"
+msgstr "í…Œë§ˆ í¸ì§‘ê¸°"
 
 #: color.py:98
-msgid "Ê“x"
-msgstr "??"
+msgid "å½©åº¦"
+msgstr "ì±„ë„"
 
 #: color.py:98
-msgid "–¾“x"
-msgstr "??"
+msgid "æ˜åº¦"
+msgstr "ëª…ë„"
 
 #: color.py:98
-msgid "F‘Š"
-msgstr "??"
+msgid "è‰²ç›¸"
+msgstr "ìƒ‰ìƒ"
 
 #: color.py:133
-msgid "Œ»İ‚Ìƒe[ƒ}"
-msgstr "?? ??"
+msgid "ç¾åœ¨ã®ãƒ†ãƒ¼ãƒ"
+msgstr "í˜„ì¬ í…Œë§ˆ"
 
 #: color.py:144
-msgid "V‹Kƒe[ƒ}"
-msgstr "? ??"
+msgid "æ–°è¦ãƒ†ãƒ¼ãƒ"
+msgstr "ìƒˆ í…Œë§ˆ"
 
 #: color.py:172
-msgid "ƒe[ƒ}‚ğ“K—p"
-msgstr "?? ??"
+msgid "ãƒ†ãƒ¼ãƒã‚’é©ç”¨"
+msgstr "í…Œë§ˆ ì ìš©"
 
 #: main.py:93
-msgid "ƒAƒbƒvƒf[ƒg"
-msgstr "????"
+msgid "ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆ"
+msgstr "ì—…ë°ì´íŠ¸"
 
 #: main.py:94
-msgid "V‚µ‚¢ƒo[ƒWƒ‡ƒ“F"
-msgstr "??? ??: "
+msgid "æ–°ã—ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼š"
+msgstr "ìƒˆë¡œìš´ ë²„ì „: "
 
 #: main.py:96
 msgid ""
 "\n"
-"‚ªŒöŠJ‚³‚ê‚Ü‚µ‚½B\n"
-"ƒ_ƒEƒ“ƒ[ƒh‚µ‚Ü‚·‚©H"
+"ãŒå…¬é–‹ã•ã‚Œã¾ã—ãŸã€‚\n"
+"ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™ã‹ï¼Ÿ"
 msgstr ""
 "\n"
-"? ???????."
-"???????????"
+"ì´ ê³µê°œë˜ì—ˆìŠµë‹ˆë‹¤."
+"ë‹¤ìš´ë¡œë“œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?"
 
 #: main.py:99 main.py:119
-msgid "ƒLƒƒƒ“ƒZƒ‹"
-msgstr "??"
+msgid "ã‚­ãƒ£ãƒ³ã‚»ãƒ«"
+msgstr "ì·¨ì†Œ"
 
 #: main.py:100 main.py:106 main.py:447 main.py:893
-msgid "ƒ_ƒEƒ“ƒ[ƒh"
-msgstr "????"
+msgid "ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰"
+msgstr "ë‹¤ìš´ë¡œë“œ"
 
 #: main.py:101 main.py:103
-msgid "GitHub‚Ö"
-msgstr "GitHub?? ??"
+msgid "GitHubã¸"
+msgstr "GitHubì—ì„œ ì—´ê¸°"
 
 #: main.py:115 main.py:120 main.py:122 main.py:247
-msgid "ƒAƒ“ƒCƒ“ƒXƒg[ƒ‹"
-msgstr "???? ??"
+msgid "ã‚¢ãƒ³ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«"
+msgstr "í”„ë¡œê·¸ë¨ ì œê±°"
 
 #: main.py:116
-msgid "–{“–‚ÉƒAƒ“ƒCƒ“ƒXƒg[ƒ‹‚µ‚Ü‚·‚©H"
-msgstr "??? ? ????? ?????????"
+msgid "æœ¬å½“ã«ã‚¢ãƒ³ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™ã‹ï¼Ÿ"
+msgstr "ì •ë§ë¡œ ì´ í”„ë¡œê·¸ë¨ì„ ì œê±°í•˜ì‹œê² ìŠµë‹ˆê¹Œ?"
 
 #: main.py:140
-msgid "İ’è"
-msgstr "??"
+msgid "è¨­å®š"
+msgstr "ì„¤ì •"
 
 #: main.py:141
-msgid "•\¦"
-msgstr "??"
+msgid "è¡¨ç¤º"
+msgstr "ë³´ê¸°"
 
 #: main.py:142
-msgid "ƒŠƒ“ƒN‚ğŠJ‚­"
-msgstr "????"
+msgid "ãƒªãƒ³ã‚¯ã‚’é–‹ã"
+msgstr "ë°”ë¡œê°€ê¸°"
 
 #: main.py:143
-msgid "ƒx[ƒ^"
-msgstr "??"
+msgid "ãƒ™ãƒ¼ã‚¿"
+msgstr "ë² íƒ€"
 
 #: main.py:144
-msgid "‚»‚Ì‘¼"
-msgstr "??"
+msgid "ãã®ä»–"
+msgstr "ê¸°íƒ€"
 
 #: main.py:152
-msgid "Cookieİ’è"
-msgstr "Cookie ??"
+msgid "Cookieè¨­å®š"
+msgstr "Cookie ì„¤ì •"
 
 #: main.py:155 main.py:164
-msgid "‚È‚µ"
+msgid "ãªã—"
 msgstr "none"
 
 #: main.py:200 main.py:206
-msgid "ƒVƒXƒeƒ€(ƒƒjƒ…[ƒo[‚ÍÄ‹N“®”½‰f)"
-msgstr "??? (?? ??? ??? ? ???)"
+msgid "ã‚·ã‚¹ãƒ†ãƒ (ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã¯å†èµ·å‹•æ™‚åæ˜ )"
+msgstr "ì‹œìŠ¤í…œ (ë©”ë‰´ ë°”ì—ëŠ” ì¬ì‹œì‘ í›„ ë°˜ì˜ë¨)"
 
 #: main.py:201 main.py:212
-msgid "ƒ_[ƒN"
-msgstr "??"
+msgid "ãƒ€ãƒ¼ã‚¯"
+msgstr "ë‹¤í¬"
 
 #: main.py:202 main.py:217
-msgid "ƒ‰ƒCƒg"
-msgstr "???"
+msgid "ãƒ©ã‚¤ãƒˆ"
+msgstr "ë¼ì´íŠ¸"
 
 #: main.py:222
-msgid "ƒe[ƒ}ƒGƒfƒBƒ^‚ğŠJ‚­"
-msgstr "?? ??? ??"
+msgid "ãƒ†ãƒ¼ãƒã‚¨ãƒ‡ã‚£ã‚¿ã‚’é–‹ã"
+msgstr "í…Œë§ˆ í¸ì§‘ê¸° ì—´ê¸°"
 
 #: main.py:245
-msgid "ƒNƒCƒbƒNƒ‚[ƒh"
-msgstr "? ??"
+msgid "ã‚¯ã‚¤ãƒƒã‚¯ãƒ¢ãƒ¼ãƒ‰"
+msgstr "í€µ ëª¨ë“œ"
 
 #: main.py:387
-msgid "ƒy[ƒXƒg"
-msgstr "????"
+msgid "ãƒšãƒ¼ã‚¹ãƒˆ"
+msgstr "ë¶™ì—¬ë„£ê¸°"
 
 #: main.py:400
-msgid "•Û‘¶æƒtƒHƒ‹ƒ_"
-msgstr "??? ??"
+msgid "ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€"
+msgstr "ì €ì¥í•  í´ë”"
 
 #: main.py:412
-msgid "QÆ"
-msgstr "????"
+msgid "å‚ç…§"
+msgstr "ì°¾ì•„ë³´ê¸°"
 
 #: main.py:421
-msgid "•ÒW"
-msgstr "??"
+msgid "ç·¨é›†"
+msgstr "í¸ì§‘"
 
 #: main.py:437
-msgid "•Û‘¶ƒtƒ@ƒCƒ‹–¼(‹ó”’‚È‚çƒ^ƒCƒgƒ‹)"
-msgstr "??? (?? ? ?? ??)"
+msgid "ä¿å­˜ãƒ•ã‚¡ã‚¤ãƒ«å(ç©ºç™½ãªã‚‰ã‚¿ã‚¤ãƒˆãƒ«)"
+msgstr "íŒŒì¼ëª… (ê³µë°± ì‹œ ì˜ìƒ ì œëª©)"
 
 #: main.py:458
-msgid "“®‰æî•ñ‚Ìæ“¾"
-msgstr "?? ?? ????"
+msgid "å‹•ç”»æƒ…å ±ã®å–å¾—"
+msgstr "ì˜ìƒ ì •ë³´ ë¶ˆëŸ¬ì˜¤ê¸°"
 
 #: main.py:470
-msgid "”ÍˆÍw’è‚Åƒ_ƒEƒ“ƒ[ƒh"
-msgstr "?? ??? ????"
+msgid "ç¯„å›²æŒ‡å®šã§ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰"
+msgstr "íŠ¹ì • êµ¬ê°„ë§Œ ë‹¤ìš´ë¡œë“œ"
 
 #: main.py:500
-msgid "‰¹º‚Ì‚İƒ_ƒEƒ“ƒ[ƒh"
-msgstr "?? ??? ????"
+msgid "éŸ³å£°ã®ã¿ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰"
+msgstr "ìŒì› íŒŒì¼ë¡œ ë‹¤ìš´ë¡œë“œ"
 
 #: main.py:513
-msgid "ƒTƒ€ƒlƒCƒ‹‚ğ–„‚ß‚Ş"
-msgstr "??? ???"
+msgid "ã‚µãƒ ãƒã‚¤ãƒ«ã‚’åŸ‹ã‚è¾¼ã‚€"
+msgstr "ì¸ë„¤ì¼ ì„ë² ë“œ"
 
 #: main.py:602 main.py:705
-msgid "ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½"
-msgstr "??? ??????."
+msgid "ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ"
+msgstr "ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤."
 
 #: main.py:621 main.py:629
-msgid "ƒGƒ‰["
-msgstr "??"
+msgid "ã‚¨ãƒ©ãƒ¼"
+msgstr "ì˜¤ë¥˜"
 
 #: main.py:622
-msgid "URL‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢"
-msgstr "URL? ??????."
+msgid "URLã‚’å…¥åŠ›ã—ã¦ãã ã•ã„"
+msgstr "URLì„ ì…ë ¥í•´ì£¼ì„¸ìš”."
 
 #: main.py:630
-msgid "•Û‘¶ƒtƒHƒ‹ƒ_‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢"
-msgstr "??? ??? ??????."
+msgid "ä¿å­˜ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®šã—ã¦ãã ã•ã„"
+msgstr "ì €ì¥í•  í´ë”ë¥¼ ì§€ì •í•´ì£¼ì„¸ìš”."
 
 #: main.py:698
 msgid ""
 "\n"
-"€”õ’†"
+"æº–å‚™ä¸­"
 msgstr ""
 "\n"
-"?? ?"
+"ì¤€ë¹„ ì¤‘"
 
 #: main.py:730
-msgid "“®‰æ"
-msgstr "?? "
+msgid "å‹•ç”»"
+msgstr "ì˜ìƒ "
 
 #: main.py:732
-msgid "‰¹º"
-msgstr "?? "
+msgid "éŸ³å£°"
+msgstr "ìŒì› "
 
 #: main.py:742
-msgid "‚ğƒ_ƒEƒ“ƒ[ƒh’†F"
-msgstr "???? ?: "
+msgid "ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ä¸­ï¼š"
+msgstr "ë‹¤ìš´ë¡œë“œ ì¤‘: "
 
 #: main.py:755
 msgid ""
 "\n"
-"c‚è "
+"æ®‹ã‚Š "
 msgstr ""
 "\n"
-"?? ?? "
+"ë‚¨ì€ ì‹œê°„ "
 
 #: main.py:766
 msgid ""
 "\n"
-"ˆ—’†"
+"å‡¦ç†ä¸­"
 msgstr ""
 "\n"
-"?? ?"
+"ì²˜ë¦¬ ì¤‘"
 
 #: main.py:772
 msgid ""
 "\n"
-"ƒ_ƒEƒ“ƒ[ƒhŠ®—¹"
+"ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å®Œäº†"
 msgstr ""
 "\n"
-"???? ??"
+"ë‹¤ìš´ë¡œë“œ ì™„ë£Œ"
 
 #: main.py:775
-msgid "ƒ_ƒEƒ“ƒ[ƒh‚ªŠ®—¹‚µ‚Ü‚µ‚½"
-msgstr "????? ???????."
+msgid "ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãŒå®Œäº†ã—ã¾ã—ãŸ"
+msgstr "ë‹¤ìš´ë¡œë“œê°€ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤."
 
 #: main.py:793
-msgid "ƒtƒ@ƒCƒ‹–¼ƒeƒ“ƒvƒŒ[ƒg‚Ì•ÒW"
-msgstr "??? ??? ??"
+msgid "ãƒ•ã‚¡ã‚¤ãƒ«åãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ç·¨é›†"
+msgstr "íŒŒì¼ëª… í…œí”Œë¦¿ í¸ì§‘"
 
 #: main.py:798 main.py:846
-msgid "ƒ^ƒCƒgƒ‹"
-msgstr "??"
+msgid "ã‚¿ã‚¤ãƒˆãƒ«"
+msgstr "ì œëª©"
 
 #: main.py:800 main.py:847
-msgid "“ŠeÒ"
-msgstr "???"
+msgid "æŠ•ç¨¿è€…"
+msgstr "ê²Œì‹œì"
 
 #: main.py:801 main.py:848
-msgid "“ŠeÒID"
-msgstr "??? ID"
+msgid "æŠ•ç¨¿è€…ID"
+msgstr "ê²Œì‹œì ID"
 
 #: main.py:802 main.py:849
-msgid "“Še“ú"
-msgstr "???"
+msgid "æŠ•ç¨¿æ—¥"
+msgstr "ê²Œì‹œì¼"
 
 #: main.py:803 main.py:850
-msgid "“®‰æƒTƒCƒYc"
-msgstr "?? ??"
+msgid "å‹•ç”»ã‚µã‚¤ã‚ºç¸¦"
+msgstr "ì˜ìƒ ë†’ì´"
 
 #: main.py:804 main.py:851
-msgid "“®‰æƒTƒCƒY‰¡"
-msgstr "?? ??"
+msgid "å‹•ç”»ã‚µã‚¤ã‚ºæ¨ª"
+msgstr "ì˜ìƒ ë„ˆë¹„"
 
 #: main.py:806 main.py:853
-msgid "ƒTƒCƒgƒhƒƒCƒ“"
-msgstr "???"
+msgid "ã‚µã‚¤ãƒˆãƒ‰ãƒ¡ã‚¤ãƒ³"
+msgstr "ë„ë©”ì¸"
 
 #: main.py:807 main.py:854
-msgid "ƒvƒŒƒCƒŠƒXƒg–¼"
-msgstr "???? ??"
+msgid "ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆå"
+msgstr "ì¬ìƒëª©ë¡ ì œëª©"
 
 #: main.py:808 main.py:855
-msgid "ƒvƒŒƒCƒŠƒXƒg“à”Ô†"
-msgstr "???? ? ??"
+msgid "ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆå†…ç•ªå·"
+msgstr "ì¬ìƒëª©ë¡ ë‚´ ìˆœë²ˆ"
 
 #: main.py:827
-msgid "“K—p"
-msgstr "??"
+msgid "é©ç”¨"
+msgstr "ì ìš©"
 
 #: main.py:857
-msgid "ƒNƒŠƒA"
-msgstr "???"
+msgid "ã‚¯ãƒªã‚¢"
+msgstr "ì§€ìš°ê¸°"
 
 #: main.py:894
-msgid "ƒNƒCƒbƒNƒ‚[ƒh‚ğI—¹‚·‚é"
-msgstr "? ?? ????"
+msgid "ã‚¯ã‚¤ãƒƒã‚¯ãƒ¢ãƒ¼ãƒ‰ã‚’çµ‚äº†ã™ã‚‹"
+msgstr "í€µ ëª¨ë“œ ì¢…ë£Œí•˜ê¸°"
 
-msgid "Œ¾Œê"
-msgstr "??"
+msgid "è¨€èª"
+msgstr "ì–¸ì–´"
 
-msgid "ŠOŠÏ"
-msgstr "??"
+msgid "å¤–è¦³"
+msgstr "ëª¨ì–‘"
 
-msgid "yt-dlp_GUI‚ğI—¹‚·‚é"
-msgstr "yt-dlp_GUI ????"
+msgid "yt-dlp_GUIã‚’çµ‚äº†ã™ã‚‹"
+msgstr "yt-dlp_GUI ì¢…ë£Œí•˜ê¸°"

@@ -10,201 +10,201 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=cp932\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
 
 #: color.py:25
-msgid "ƒe[ƒ}ƒGƒfƒBƒ^["
+msgid "ãƒ†ãƒ¼ãƒã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼"
 msgstr "Theme Editor"
 
 #: color.py:98
-msgid "Ê“x"
+msgid "å½©åº¦"
 msgstr "Saturation"
 
 #: color.py:98
-msgid "–¾“x"
+msgid "æ˜åº¦"
 msgstr "Brightness"
 
 #: color.py:98
-msgid "F‘Š"
+msgid "è‰²ç›¸"
 msgstr "Hue"
 
 #: color.py:133
-msgid "Œ»İ‚Ìƒe[ƒ}"
+msgid "ç¾åœ¨ã®ãƒ†ãƒ¼ãƒ"
 msgstr "Current Theme"
 
 #: color.py:144
-msgid "V‹Kƒe[ƒ}"
+msgid "æ–°è¦ãƒ†ãƒ¼ãƒ"
 msgstr "New Theme"
 
 #: color.py:172
-msgid "ƒe[ƒ}‚ğ“K—p"
+msgid "ãƒ†ãƒ¼ãƒã‚’é©ç”¨"
 msgstr "Apply Theme"
 
 #: main.py:93
-msgid "ƒAƒbƒvƒf[ƒg"
+msgid "ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆ"
 msgstr "Update"
 
 #: main.py:94
-msgid "V‚µ‚¢ƒo[ƒWƒ‡ƒ“F"
+msgid "æ–°ã—ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼š"
 msgstr "New version: "
 
 #: main.py:96
 msgid ""
 "\n"
-"‚ªŒöŠJ‚³‚ê‚Ü‚µ‚½B\n"
-"ƒ_ƒEƒ“ƒ[ƒh‚µ‚Ü‚·‚©H"
+"ãŒå…¬é–‹ã•ã‚Œã¾ã—ãŸã€‚\n"
+"ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™ã‹ï¼Ÿ"
 msgstr ""
 "\n"
 "is released.\n"
 "Would you like to download?"
 
 #: main.py:99 main.py:119
-msgid "ƒLƒƒƒ“ƒZƒ‹"
+msgid "ã‚­ãƒ£ãƒ³ã‚»ãƒ«"
 msgstr "Cancel"
 
 #: main.py:100 main.py:106 main.py:447 main.py:893
-msgid "ƒ_ƒEƒ“ƒ[ƒh"
+msgid "ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰"
 msgstr "Dowload"
 
 #: main.py:101 main.py:103
-msgid "GitHub‚Ö"
+msgid "GitHubã¸"
 msgstr "Open GitHub"
 
 #: main.py:115 main.py:120 main.py:122 main.py:247
-msgid "ƒAƒ“ƒCƒ“ƒXƒg[ƒ‹"
+msgid "ã‚¢ãƒ³ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«"
 msgstr "Uninstall"
 
 #: main.py:116
-msgid "–{“–‚ÉƒAƒ“ƒCƒ“ƒXƒg[ƒ‹‚µ‚Ü‚·‚©H"
+msgid "æœ¬å½“ã«ã‚¢ãƒ³ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™ã‹ï¼Ÿ"
 msgstr "Do you really want to uninstall?"
 
 #: main.py:140
-msgid "İ’è"
+msgid "è¨­å®š"
 msgstr "Option"
 
 #: main.py:141
-msgid "•\¦"
+msgid "è¡¨ç¤º"
 msgstr "View"
 
 #: main.py:142
-msgid "ƒŠƒ“ƒN‚ğŠJ‚­"
+msgid "ãƒªãƒ³ã‚¯ã‚’é–‹ã"
 msgstr "Open Links"
 
 #: main.py:143
-msgid "ƒx[ƒ^"
+msgid "ãƒ™ãƒ¼ã‚¿"
 msgstr "Beta"
 
 #: main.py:144
-msgid "‚»‚Ì‘¼"
+msgid "ãã®ä»–"
 msgstr "Others"
 
 #: main.py:152
-msgid "Cookieİ’è"
+msgid "Cookieè¨­å®š"
 msgstr "Cookie Setting"
 
 #: main.py:155 main.py:164
-msgid "‚È‚µ"
+msgid "ãªã—"
 msgstr "None"
 
 #: main.py:200 main.py:206
-msgid "ƒVƒXƒeƒ€(ƒƒjƒ…[ƒo[‚ÍÄ‹N“®”½‰f)"
+msgid "ã‚·ã‚¹ãƒ†ãƒ (ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã¯å†èµ·å‹•æ™‚åæ˜ )"
 msgstr "System (Reboot to apply menu bar)"
 
 #: main.py:201 main.py:212
-msgid "ƒ_[ƒN"
+msgid "ãƒ€ãƒ¼ã‚¯"
 msgstr "Dark"
 
 #: main.py:202 main.py:217
-msgid "ƒ‰ƒCƒg"
+msgid "ãƒ©ã‚¤ãƒˆ"
 msgstr "Light"
 
 #: main.py:222
-msgid "ƒe[ƒ}ƒGƒfƒBƒ^‚ğŠJ‚­"
+msgid "ãƒ†ãƒ¼ãƒã‚¨ãƒ‡ã‚£ã‚¿ã‚’é–‹ã"
 msgstr "Open Theme Editor"
 
 #: main.py:245
-msgid "ƒNƒCƒbƒNƒ‚[ƒh"
+msgid "ã‚¯ã‚¤ãƒƒã‚¯ãƒ¢ãƒ¼ãƒ‰"
 msgstr "Quick Mode"
 
 #: main.py:387
-msgid "ƒy[ƒXƒg"
+msgid "ãƒšãƒ¼ã‚¹ãƒˆ"
 msgstr "Paste"
 
 #: main.py:400
-msgid "•Û‘¶æƒtƒHƒ‹ƒ_"
+msgid "ä¿å­˜å…ˆãƒ•ã‚©ãƒ«ãƒ€"
 msgstr "Save Folder"
 
 #: main.py:412
-msgid "QÆ"
+msgid "å‚ç…§"
 msgstr "Browse"
 
 #: main.py:421
-msgid "•ÒW"
+msgid "ç·¨é›†"
 msgstr "Edit"
 
 #: main.py:437
-msgid "•Û‘¶ƒtƒ@ƒCƒ‹–¼(‹ó”’‚È‚çƒ^ƒCƒgƒ‹)"
+msgid "ä¿å­˜ãƒ•ã‚¡ã‚¤ãƒ«å(ç©ºç™½ãªã‚‰ã‚¿ã‚¤ãƒˆãƒ«)"
 msgstr "Filename (Title when empty)"
 
 #: main.py:458
-msgid "“®‰æî•ñ‚Ìæ“¾"
+msgid "å‹•ç”»æƒ…å ±ã®å–å¾—"
 msgstr "Get Video Information"
 
 #: main.py:470
-msgid "”ÍˆÍw’è‚Åƒ_ƒEƒ“ƒ[ƒh"
+msgid "ç¯„å›²æŒ‡å®šã§ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰"
 msgstr "Download with Time Specification"
 
 #: main.py:500
-msgid "‰¹º‚Ì‚İƒ_ƒEƒ“ƒ[ƒh"
+msgid "éŸ³å£°ã®ã¿ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰"
 msgstr "Audio Only"
 
 #: main.py:513
-msgid "ƒTƒ€ƒlƒCƒ‹‚ğ–„‚ß‚Ş"
+msgid "ã‚µãƒ ãƒã‚¤ãƒ«ã‚’åŸ‹ã‚è¾¼ã‚€"
 msgstr "Embed Thumbnail"
 
 #: main.py:602 main.py:705
-msgid "ƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½"
+msgid "ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ"
 msgstr "An error has occurred"
 
 #: main.py:621 main.py:629
-msgid "ƒGƒ‰["
+msgid "ã‚¨ãƒ©ãƒ¼"
 msgstr "Error"
 
 #: main.py:622
-msgid "URL‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢"
+msgid "URLã‚’å…¥åŠ›ã—ã¦ãã ã•ã„"
 msgstr "Please enter URL."
 
 #: main.py:630
-msgid "•Û‘¶ƒtƒHƒ‹ƒ_‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢"
+msgid "ä¿å­˜ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®šã—ã¦ãã ã•ã„"
 msgstr "Please specify the folder."
 
 #: main.py:698
 msgid ""
 "\n"
-"€”õ’†"
+"æº–å‚™ä¸­"
 msgstr ""
 "\n"
 "Preparing"
 
 #: main.py:730
-msgid "“®‰æ"
+msgid "å‹•ç”»"
 msgstr "Video "
 
 #: main.py:732
-msgid "‰¹º"
+msgid "éŸ³å£°"
 msgstr "Audio "
 
 #: main.py:742
-msgid "‚ğƒ_ƒEƒ“ƒ[ƒh’†F"
+msgid "ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ä¸­ï¼š"
 msgstr "Downloading: "
 
 #: main.py:755
 msgid ""
 "\n"
-"c‚è "
+"æ®‹ã‚Š "
 msgstr ""
 "\n"
 "Left "
@@ -212,7 +212,7 @@ msgstr ""
 #: main.py:766
 msgid ""
 "\n"
-"ˆ—’†"
+"å‡¦ç†ä¸­"
 msgstr ""
 "\n"
 "Processing"
@@ -220,72 +220,72 @@ msgstr ""
 #: main.py:772
 msgid ""
 "\n"
-"ƒ_ƒEƒ“ƒ[ƒhŠ®—¹"
+"ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰å®Œäº†"
 msgstr ""
 "\n"
 "Download Complete"
 
 #: main.py:775
-msgid "ƒ_ƒEƒ“ƒ[ƒh‚ªŠ®—¹‚µ‚Ü‚µ‚½"
+msgid "ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãŒå®Œäº†ã—ã¾ã—ãŸ"
 msgstr "Donwload is complete!"
 
 #: main.py:793
-msgid "ƒtƒ@ƒCƒ‹–¼ƒeƒ“ƒvƒŒ[ƒg‚Ì•ÒW"
+msgid "ãƒ•ã‚¡ã‚¤ãƒ«åãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®ç·¨é›†"
 msgstr "Edit Filename Template"
 
 #: main.py:798 main.py:846
-msgid "ƒ^ƒCƒgƒ‹"
+msgid "ã‚¿ã‚¤ãƒˆãƒ«"
 msgstr "Title"
 
 #: main.py:800 main.py:847
-msgid "“ŠeÒ"
+msgid "æŠ•ç¨¿è€…"
 msgstr "Uploader"
 
 #: main.py:801 main.py:848
-msgid "“ŠeÒID"
+msgid "æŠ•ç¨¿è€…ID"
 msgstr "Uploader ID"
 
 #: main.py:802 main.py:849
-msgid "“Še“ú"
+msgid "æŠ•ç¨¿æ—¥"
 msgstr "Upload Date"
 
 #: main.py:803 main.py:850
-msgid "“®‰æƒTƒCƒYc"
+msgid "å‹•ç”»ã‚µã‚¤ã‚ºç¸¦"
 msgstr "Height"
 
 #: main.py:804 main.py:851
-msgid "“®‰æƒTƒCƒY‰¡"
+msgid "å‹•ç”»ã‚µã‚¤ã‚ºæ¨ª"
 msgstr "Width"
 
 #: main.py:806 main.py:853
-msgid "ƒTƒCƒgƒhƒƒCƒ“"
+msgid "ã‚µã‚¤ãƒˆãƒ‰ãƒ¡ã‚¤ãƒ³"
 msgstr "Domain"
 
 #: main.py:807 main.py:854
-msgid "ƒvƒŒƒCƒŠƒXƒg–¼"
+msgid "ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆå"
 msgstr "Playlist Title"
 
 #: main.py:808 main.py:855
-msgid "ƒvƒŒƒCƒŠƒXƒg“à”Ô†"
+msgid "ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆå†…ç•ªå·"
 msgstr "Index in Playlist"
 
 #: main.py:827
-msgid "“K—p"
+msgid "é©ç”¨"
 msgstr "Apply"
 
 #: main.py:857
-msgid "ƒNƒŠƒA"
+msgid "ã‚¯ãƒªã‚¢"
 msgstr "Clear"
 
 #: main.py:894
-msgid "ƒNƒCƒbƒNƒ‚[ƒh‚ğI—¹‚·‚é"
+msgid "ã‚¯ã‚¤ãƒƒã‚¯ãƒ¢ãƒ¼ãƒ‰ã‚’çµ‚äº†ã™ã‚‹"
 msgstr "Exit Quick Mode"
 
-msgid "Œ¾Œê"
+msgid "è¨€èª"
 msgstr "Language"
 
-msgid "ŠOŠÏ"
+msgid "å¤–è¦³"
 msgstr "Appeareance"
 
-msgid "yt-dlp_GUI‚ğI—¹‚·‚é"
+msgid "yt-dlp_GUIã‚’çµ‚äº†ã™ã‚‹"
 msgstr "Exit yt-dlp_GUI"
