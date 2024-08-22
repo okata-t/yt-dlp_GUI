@@ -1,0 +1,291 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2024-08-09 00:36+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=cp932\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: color.py:25
+msgid "テーマエディター"
+msgstr "?? ???"
+
+#: color.py:98
+msgid "彩度"
+msgstr "??"
+
+#: color.py:98
+msgid "明度"
+msgstr "??"
+
+#: color.py:98
+msgid "色相"
+msgstr "??"
+
+#: color.py:133
+msgid "現在のテーマ"
+msgstr "?? ??"
+
+#: color.py:144
+msgid "新規テーマ"
+msgstr "? ??"
+
+#: color.py:172
+msgid "テーマを適用"
+msgstr "?? ??"
+
+#: main.py:93
+msgid "アップデート"
+msgstr "????"
+
+#: main.py:94
+msgid "新しいバージョン："
+msgstr "??? ??: "
+
+#: main.py:96
+msgid ""
+"\n"
+"が公開されました。\n"
+"ダウンロードしますか？"
+msgstr ""
+"\n"
+"? ???????."
+"???????????"
+
+#: main.py:99 main.py:119
+msgid "キャンセル"
+msgstr "??"
+
+#: main.py:100 main.py:106 main.py:447 main.py:893
+msgid "ダウンロード"
+msgstr "????"
+
+#: main.py:101 main.py:103
+msgid "GitHubへ"
+msgstr "GitHub?? ??"
+
+#: main.py:115 main.py:120 main.py:122 main.py:247
+msgid "アンインストール"
+msgstr "???? ??"
+
+#: main.py:116
+msgid "本当にアンインストールしますか？"
+msgstr "??? ? ????? ?????????"
+
+#: main.py:140
+msgid "設定"
+msgstr "??"
+
+#: main.py:141
+msgid "表示"
+msgstr "??"
+
+#: main.py:142
+msgid "リンクを開く"
+msgstr "????"
+
+#: main.py:143
+msgid "ベータ"
+msgstr "??"
+
+#: main.py:144
+msgid "その他"
+msgstr "??"
+
+#: main.py:152
+msgid "Cookie設定"
+msgstr "Cookie ??"
+
+#: main.py:155 main.py:164
+msgid "なし"
+msgstr "none"
+
+#: main.py:200 main.py:206
+msgid "システム(メニューバーは再起動時反映)"
+msgstr "??? (?? ??? ??? ? ???)"
+
+#: main.py:201 main.py:212
+msgid "ダーク"
+msgstr "??"
+
+#: main.py:202 main.py:217
+msgid "ライト"
+msgstr "???"
+
+#: main.py:222
+msgid "テーマエディタを開く"
+msgstr "?? ??? ??"
+
+#: main.py:245
+msgid "クイックモード"
+msgstr "? ??"
+
+#: main.py:387
+msgid "ペースト"
+msgstr "????"
+
+#: main.py:400
+msgid "保存先フォルダ"
+msgstr "??? ??"
+
+#: main.py:412
+msgid "参照"
+msgstr "????"
+
+#: main.py:421
+msgid "編集"
+msgstr "??"
+
+#: main.py:437
+msgid "保存ファイル名(空白ならタイトル)"
+msgstr "??? (?? ? ?? ??)"
+
+#: main.py:458
+msgid "動画情報の取得"
+msgstr "?? ?? ????"
+
+#: main.py:470
+msgid "範囲指定でダウンロード"
+msgstr "?? ??? ????"
+
+#: main.py:500
+msgid "音声のみダウンロード"
+msgstr "?? ??? ????"
+
+#: main.py:513
+msgid "サムネイルを埋め込む"
+msgstr "??? ???"
+
+#: main.py:602 main.py:705
+msgid "エラーが発生しました"
+msgstr "??? ??????."
+
+#: main.py:621 main.py:629
+msgid "エラー"
+msgstr "??"
+
+#: main.py:622
+msgid "URLを入力してください"
+msgstr "URL? ??????."
+
+#: main.py:630
+msgid "保存フォルダを指定してください"
+msgstr "??? ??? ??????."
+
+#: main.py:698
+msgid ""
+"\n"
+"準備中"
+msgstr ""
+"\n"
+"?? ?"
+
+#: main.py:730
+msgid "動画"
+msgstr "?? "
+
+#: main.py:732
+msgid "音声"
+msgstr "?? "
+
+#: main.py:742
+msgid "をダウンロード中："
+msgstr "???? ?: "
+
+#: main.py:755
+msgid ""
+"\n"
+"残り "
+msgstr ""
+"\n"
+"?? ?? "
+
+#: main.py:766
+msgid ""
+"\n"
+"処理中"
+msgstr ""
+"\n"
+"?? ?"
+
+#: main.py:772
+msgid ""
+"\n"
+"ダウンロード完了"
+msgstr ""
+"\n"
+"???? ??"
+
+#: main.py:775
+msgid "ダウンロードが完了しました"
+msgstr "????? ???????."
+
+#: main.py:793
+msgid "ファイル名テンプレートの編集"
+msgstr "??? ??? ??"
+
+#: main.py:798 main.py:846
+msgid "タイトル"
+msgstr "??"
+
+#: main.py:800 main.py:847
+msgid "投稿者"
+msgstr "???"
+
+#: main.py:801 main.py:848
+msgid "投稿者ID"
+msgstr "??? ID"
+
+#: main.py:802 main.py:849
+msgid "投稿日"
+msgstr "???"
+
+#: main.py:803 main.py:850
+msgid "動画サイズ縦"
+msgstr "?? ??"
+
+#: main.py:804 main.py:851
+msgid "動画サイズ横"
+msgstr "?? ??"
+
+#: main.py:806 main.py:853
+msgid "サイトドメイン"
+msgstr "???"
+
+#: main.py:807 main.py:854
+msgid "プレイリスト名"
+msgstr "???? ??"
+
+#: main.py:808 main.py:855
+msgid "プレイリスト内番号"
+msgstr "???? ? ??"
+
+#: main.py:827
+msgid "適用"
+msgstr "??"
+
+#: main.py:857
+msgid "クリア"
+msgstr "???"
+
+#: main.py:894
+msgid "クイックモードを終了する"
+msgstr "? ?? ????"
+
+msgid "言語"
+msgstr "??"
+
+msgid "外観"
+msgstr "??"
+
+msgid "yt-dlp_GUIを終了する"
+msgstr "yt-dlp_GUI ????"
