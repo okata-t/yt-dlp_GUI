@@ -17,39 +17,39 @@ msgstr ""
 
 #: color.py:25
 msgid "テーマエディター"
-msgstr "theme editor"
+msgstr "Theme Editor"
 
 #: color.py:98
 msgid "彩度"
-msgstr "saturation"
+msgstr "Saturation"
 
 #: color.py:98
 msgid "明度"
-msgstr "brightness"
+msgstr "Brightness"
 
 #: color.py:98
 msgid "色相"
-msgstr "hue"
+msgstr "Hue"
 
 #: color.py:133
 msgid "現在のテーマ"
-msgstr "current theme"
+msgstr "Current Theme"
 
 #: color.py:144
 msgid "新規テーマ"
-msgstr "new theme"
+msgstr "New Theme"
 
 #: color.py:172
 msgid "テーマを適用"
-msgstr "apply theme"
+msgstr "Apply Theme"
 
 #: main.py:93
 msgid "アップデート"
-msgstr "update"
+msgstr "Update"
 
 #: main.py:94
 msgid "新しいバージョン："
-msgstr "new version: "
+msgstr "New version: "
 
 #: main.py:96
 msgid ""
@@ -58,23 +58,24 @@ msgid ""
 "ダウンロードしますか？"
 msgstr ""
 "\n"
+"is released.\n"
 "Would you like to download?"
 
 #: main.py:99 main.py:119
 msgid "キャンセル"
-msgstr "cancel"
+msgstr "Cancel"
 
 #: main.py:100 main.py:106 main.py:447 main.py:893
 msgid "ダウンロード"
-msgstr "dowload"
+msgstr "Dowload"
 
 #: main.py:101 main.py:103
 msgid "GitHubへ"
-msgstr "open GitHub"
+msgstr "Open GitHub"
 
 #: main.py:115 main.py:120 main.py:122 main.py:247
 msgid "アンインストール"
-msgstr "uninstall"
+msgstr "Uninstall"
 
 #: main.py:116
 msgid "本当にアンインストールしますか？"
@@ -82,91 +83,91 @@ msgstr "Do you really want to uninstall?"
 
 #: main.py:140
 msgid "設定"
-msgstr "option"
+msgstr "Option"
 
 #: main.py:141
 msgid "表示"
-msgstr "view"
+msgstr "View"
 
 #: main.py:142
 msgid "リンクを開く"
-msgstr "open links"
+msgstr "Open Links"
 
 #: main.py:143
 msgid "ベータ"
-msgstr "beta"
+msgstr "Beta"
 
 #: main.py:144
 msgid "その他"
-msgstr "others"
+msgstr "Others"
 
 #: main.py:152
 msgid "Cookie設定"
-msgstr "Cookie"
+msgstr "Cookie Setting"
 
 #: main.py:155 main.py:164
 msgid "なし"
-msgstr "none"
+msgstr "None"
 
 #: main.py:200 main.py:206
 msgid "システム(メニューバーは再起動時反映)"
-msgstr "system (menu bar is reflected on reboot)"
+msgstr "System (Reboot to apply menu bar)"
 
 #: main.py:201 main.py:212
 msgid "ダーク"
-msgstr "dark"
+msgstr "Dark"
 
 #: main.py:202 main.py:217
 msgid "ライト"
-msgstr "light"
+msgstr "Light"
 
 #: main.py:222
 msgid "テーマエディタを開く"
-msgstr "open theme editor"
+msgstr "Open Theme Editor"
 
 #: main.py:245
 msgid "クイックモード"
-msgstr "quick mode"
+msgstr "Quick Mode"
 
 #: main.py:387
 msgid "ペースト"
-msgstr "paste"
+msgstr "Paste"
 
 #: main.py:400
 msgid "保存先フォルダ"
-msgstr "save folder"
+msgstr "Save Folder"
 
 #: main.py:412
 msgid "参照"
-msgstr "browse"
+msgstr "Browse"
 
 #: main.py:421
 msgid "編集"
-msgstr "edit"
+msgstr "Edit"
 
 #: main.py:437
 msgid "保存ファイル名(空白ならタイトル)"
-msgstr "file name (if its blank, the title ov the video will be set)"
+msgstr "Filename (Title when empty)"
 
 #: main.py:458
 msgid "動画情報の取得"
-msgstr "get video information"
+msgstr "Get Video Information"
 
 #: main.py:470
 msgid "範囲指定でダウンロード"
-msgstr "download with time specification"
+msgstr "Download with Time Specification"
 
 #: main.py:500
 msgid "音声のみダウンロード"
-msgstr "audio only"
+msgstr "Audio Only"
 
 #: main.py:513
 msgid "サムネイルを埋め込む"
-msgstr "embed thumbnail"
+msgstr "Embed Thumbnail"
 
 #: main.py:602 main.py:705
 msgid "エラーが発生しました"
-msgstr "An ellor has occurred"
+msgstr "An error has occurred"
 
 #: main.py:621 main.py:629
 msgid "エラー"
@@ -186,19 +187,19 @@ msgid ""
 "準備中"
 msgstr ""
 "\n"
-"preparing"
+"Preparing"
 
 #: main.py:730
 msgid "動画"
-msgstr "video "
+msgstr "Video "
 
 #: main.py:732
 msgid "音声"
-msgstr "audio "
+msgstr "Audio "
 
 #: main.py:742
 msgid "をダウンロード中："
-msgstr "downloading: "
+msgstr "Downloading: "
 
 #: main.py:755
 msgid ""
@@ -206,7 +207,7 @@ msgid ""
 "残り "
 msgstr ""
 "\n"
-"left "
+"Left "
 
 #: main.py:766
 msgid ""
@@ -214,7 +215,7 @@ msgid ""
 "処理中"
 msgstr ""
 "\n"
-"processing"
+"Processing"
 
 #: main.py:772
 msgid ""
@@ -222,7 +223,7 @@ msgid ""
 "ダウンロード完了"
 msgstr ""
 "\n"
-"download complete"
+"Download Complete"
 
 #: main.py:775
 msgid "ダウンロードが完了しました"
@@ -230,62 +231,61 @@ msgstr "Donwload is complete!"
 
 #: main.py:793
 msgid "ファイル名テンプレートの編集"
-msgstr "edit filename template"
+msgstr "Edit Filename Template"
 
 #: main.py:798 main.py:846
 msgid "タイトル"
-msgstr "title"
+msgstr "Title"
 
 #: main.py:800 main.py:847
 msgid "投稿者"
-msgstr "creator"
+msgstr "Uploader"
 
 #: main.py:801 main.py:848
 msgid "投稿者ID"
-msgstr "creator ID"
+msgstr "Uploader ID"
 
 #: main.py:802 main.py:849
 msgid "投稿日"
-msgstr "upload date"
+msgstr "Upload Date"
 
 #: main.py:803 main.py:850
 msgid "動画サイズ縦"
-msgstr "height"
+msgstr "Height"
 
 #: main.py:804 main.py:851
 msgid "動画サイズ横"
-msgstr "width"
+msgstr "Width"
 
 #: main.py:806 main.py:853
 msgid "サイトドメイン"
-msgstr "domain"
+msgstr "Domain"
 
 #: main.py:807 main.py:854
 msgid "プレイリスト名"
-msgstr "playlist name"
+msgstr "Playlist Title"
 
 #: main.py:808 main.py:855
 msgid "プレイリスト内番号"
-msgstr "index in playlist"
+msgstr "Index in Playlist"
 
 #: main.py:827
 msgid "適用"
-msgstr "apply"
+msgstr "Apply"
 
 #: main.py:857
 msgid "クリア"
-msgstr "clear"
+msgstr "Clear"
 
 #: main.py:894
 msgid "クイックモードを終了する"
-msgstr "exit quick mode"
+msgstr "Exit Quick Mode"
 
 msgid "言語"
-msgstr "language"
+msgstr "Language"
 
 msgid "外観"
-msgstr "appeareance"
+msgstr "Appeareance"
 
 msgid "yt-dlp_GUIを終了する"
-msgstr "exit yt-dlp _GUI"
-
+msgstr "Exit yt-dlp_GUI"
