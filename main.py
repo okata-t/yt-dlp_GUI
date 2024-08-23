@@ -26,7 +26,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.5.0"
+VERSION = "v2.5.1"
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
