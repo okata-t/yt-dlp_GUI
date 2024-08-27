@@ -26,7 +26,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.5.0"
+VERSION = "v2.5.1"
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
@@ -213,6 +213,7 @@ class App(ctk.CTk):
         self.dict_language = {
             _("日本語"): "jp",
             _("English"): "en",
+            _("한국어"): "kr",
         }
         self.languages.append(
             self.submenu_language.add_option(
@@ -222,6 +223,11 @@ class App(ctk.CTk):
         self.languages.append(
             self.submenu_language.add_option(
                 _("English"), command=lambda: self.select_language("en")
+            )
+        )
+        self.languages.append(
+            self.submenu_language.add_option(
+                _("한국어"), command=lambda: self.select_language("kr")
             )
         )
 

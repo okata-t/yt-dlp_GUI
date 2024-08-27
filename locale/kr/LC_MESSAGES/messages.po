@@ -17,39 +17,39 @@ msgstr ""
 
 #: color.py:25
 msgid "テーマエディター"
-msgstr "Theme Editor"
+msgstr "테마 편집기"
 
 #: color.py:98
 msgid "彩度"
-msgstr "Saturation"
+msgstr "채도"
 
 #: color.py:98
 msgid "明度"
-msgstr "Brightness"
+msgstr "명도"
 
 #: color.py:98
 msgid "色相"
-msgstr "Hue"
+msgstr "색상"
 
 #: color.py:133
 msgid "現在のテーマ"
-msgstr "Current Theme"
+msgstr "현재 테마"
 
 #: color.py:144
 msgid "新規テーマ"
-msgstr "New Theme"
+msgstr "새 테마"
 
 #: color.py:172
 msgid "テーマを適用"
-msgstr "Apply Theme"
+msgstr "테마 적용"
 
 #: main.py:93
 msgid "アップデート"
-msgstr "Update"
+msgstr "업데이트"
 
 #: main.py:94
 msgid "新しいバージョン："
-msgstr "New version: "
+msgstr "새로운 버전: "
 
 #: main.py:96
 msgid ""
@@ -58,128 +58,128 @@ msgid ""
 "ダウンロードしますか？"
 msgstr ""
 "\n"
-"is released.\n"
-"Would you like to download?"
+"이 공개되었습니다."
+"다운로드하시겠습니까?"
 
 #: main.py:99 main.py:119
 msgid "キャンセル"
-msgstr "Cancel"
+msgstr "취소"
 
 #: main.py:100 main.py:106 main.py:447 main.py:893
 msgid "ダウンロード"
-msgstr "Dowload"
+msgstr "다운로드"
 
 #: main.py:101 main.py:103
 msgid "GitHubへ"
-msgstr "Open GitHub"
+msgstr "GitHub에서 열기"
 
 #: main.py:115 main.py:120 main.py:122 main.py:247
 msgid "アンインストール"
-msgstr "Uninstall"
+msgstr "프로그램 제거"
 
 #: main.py:116
 msgid "本当にアンインストールしますか？"
-msgstr "Do you really want to uninstall?"
+msgstr "정말로 이 프로그램을 제거하시겠습니까?"
 
 #: main.py:140
 msgid "設定"
-msgstr "Option"
+msgstr "설정"
 
 #: main.py:141
 msgid "表示"
-msgstr "View"
+msgstr "보기"
 
 #: main.py:142
 msgid "リンクを開く"
-msgstr "Open Links"
+msgstr "바로가기"
 
 #: main.py:143
 msgid "ベータ"
-msgstr "Beta"
+msgstr "베타"
 
 #: main.py:144
 msgid "その他"
-msgstr "Others"
+msgstr "기타"
 
 #: main.py:152
 msgid "Cookie設定"
-msgstr "Cookie Setting"
+msgstr "Cookie 설정"
 
 #: main.py:155 main.py:164
 msgid "なし"
-msgstr "None"
+msgstr "none"
 
 #: main.py:200 main.py:206
 msgid "システム(メニューバーは再起動時反映)"
-msgstr "System (Reboot to apply menu bar)"
+msgstr "시스템 (메뉴 바에는 재시작 후 반영됨)"
 
 #: main.py:201 main.py:212
 msgid "ダーク"
-msgstr "Dark"
+msgstr "다크"
 
 #: main.py:202 main.py:217
 msgid "ライト"
-msgstr "Light"
+msgstr "라이트"
 
 #: main.py:222
 msgid "テーマエディタを開く"
-msgstr "Open Theme Editor"
+msgstr "테마 편집기 열기"
 
 #: main.py:245
 msgid "クイックモード"
-msgstr "Quick Mode"
+msgstr "퀵 모드"
 
 #: main.py:387
 msgid "ペースト"
-msgstr "Paste"
+msgstr "붙여넣기"
 
 #: main.py:400
 msgid "保存先フォルダ"
-msgstr "Save Folder"
+msgstr "저장할 폴더"
 
 #: main.py:412
 msgid "参照"
-msgstr "Browse"
+msgstr "찾아보기"
 
 #: main.py:421
 msgid "編集"
-msgstr "Edit"
+msgstr "편집"
 
 #: main.py:437
 msgid "保存ファイル名(空白ならタイトル)"
-msgstr "Filename (Title when empty)"
+msgstr "파일명 (공백 시 영상 제목)"
 
 #: main.py:458
 msgid "動画情報の取得"
-msgstr "Get Video Information"
+msgstr "영상 정보 불러오기"
 
 #: main.py:470
 msgid "範囲指定でダウンロード"
-msgstr "Download with Time Specification"
+msgstr "특정 구간만 다운로드"
 
 #: main.py:500
 msgid "音声のみダウンロード"
-msgstr "Audio Only"
+msgstr "음원 파일로 다운로드"
 
 #: main.py:513
 msgid "サムネイルを埋め込む"
-msgstr "Embed Thumbnail"
+msgstr "썸네일 임베드"
 
 #: main.py:602 main.py:705
 msgid "エラーが発生しました"
-msgstr "An error has occurred"
+msgstr "오류가 발생했습니다."
 
 #: main.py:621 main.py:629
 msgid "エラー"
-msgstr "Error"
+msgstr "오류"
 
 #: main.py:622
 msgid "URLを入力してください"
-msgstr "Please enter URL."
+msgstr "URL을 입력해주세요."
 
 #: main.py:630
 msgid "保存フォルダを指定してください"
-msgstr "Please specify the folder."
+msgstr "저장할 폴더를 지정해주세요."
 
 #: main.py:698
 msgid ""
@@ -187,19 +187,19 @@ msgid ""
 "準備中"
 msgstr ""
 "\n"
-"Preparing"
+"준비 중"
 
 #: main.py:730
 msgid "動画"
-msgstr "Video "
+msgstr "영상 "
 
 #: main.py:732
 msgid "音声"
-msgstr "Audio "
+msgstr "음원 "
 
 #: main.py:742
 msgid "をダウンロード中："
-msgstr "Downloading: "
+msgstr "다운로드 중: "
 
 #: main.py:755
 msgid ""
@@ -207,7 +207,7 @@ msgid ""
 "残り "
 msgstr ""
 "\n"
-"Left "
+"남은 시간 "
 
 #: main.py:766
 msgid ""
@@ -215,7 +215,7 @@ msgid ""
 "処理中"
 msgstr ""
 "\n"
-"Processing"
+"처리 중"
 
 #: main.py:772
 msgid ""
@@ -223,69 +223,69 @@ msgid ""
 "ダウンロード完了"
 msgstr ""
 "\n"
-"Download Complete"
+"다운로드 완료"
 
 #: main.py:775
 msgid "ダウンロードが完了しました"
-msgstr "Donwload is complete!"
+msgstr "다운로드가 완료되었습니다."
 
 #: main.py:793
 msgid "ファイル名テンプレートの編集"
-msgstr "Edit Filename Template"
+msgstr "파일명 템플릿 편집"
 
 #: main.py:798 main.py:846
 msgid "タイトル"
-msgstr "Title"
+msgstr "제목"
 
 #: main.py:800 main.py:847
 msgid "投稿者"
-msgstr "Uploader"
+msgstr "게시자"
 
 #: main.py:801 main.py:848
 msgid "投稿者ID"
-msgstr "Uploader ID"
+msgstr "게시자 ID"
 
 #: main.py:802 main.py:849
 msgid "投稿日"
-msgstr "Upload Date"
+msgstr "게시일"
 
 #: main.py:803 main.py:850
 msgid "動画サイズ縦"
-msgstr "Height"
+msgstr "영상 높이"
 
 #: main.py:804 main.py:851
 msgid "動画サイズ横"
-msgstr "Width"
+msgstr "영상 너비"
 
 #: main.py:806 main.py:853
 msgid "サイトドメイン"
-msgstr "Domain"
+msgstr "도메인"
 
 #: main.py:807 main.py:854
 msgid "プレイリスト名"
-msgstr "Playlist Title"
+msgstr "재생목록 제목"
 
 #: main.py:808 main.py:855
 msgid "プレイリスト内番号"
-msgstr "Index in Playlist"
+msgstr "재생목록 내 순번"
 
 #: main.py:827
 msgid "適用"
-msgstr "Apply"
+msgstr "적용"
 
 #: main.py:857
 msgid "クリア"
-msgstr "Clear"
+msgstr "지우기"
 
 #: main.py:894
 msgid "クイックモードを終了する"
-msgstr "Exit Quick Mode"
+msgstr "퀵 모드 종료하기"
 
 msgid "言語"
-msgstr "Language"
+msgstr "언어"
 
 msgid "外観"
-msgstr "Appeareance"
+msgstr "모양"
 
 msgid "yt-dlp_GUIを終了する"
-msgstr "Exit yt-dlp_GUI"
+msgstr "yt-dlp_GUI 종료하기"
