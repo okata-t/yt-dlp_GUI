@@ -346,7 +346,6 @@ class App(ctk.CTk):
 
     def change_extension(self, mode):
         if self.var_chk_audio.get():
-
             self.cmb_extension.set(self.dict_file["audio"][0])
         else:
             self.cmb_extension.set(self.dict_file["movie"][0])
@@ -380,6 +379,18 @@ class App(ctk.CTk):
         self.menu.configure(bg_color=self.color_menubar)
         self.btn_editname.configure(text_color=self.color_edit)
         self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
+
+    def get_resolution(self):
+        self.this_resolution = []
+        url = self.ent_url.get()
+        with yt_dlp.YoutubeDL() as ydl:
+            info = ydl.extract_info(url, download=False)
+            print("a")
+        for i in range(len(self.resolution_size)):
+            if int(info["height"]) >= int(self.resolution_size[i]):
+                self.this_resolution.append(self.resolution_size[i])
+        print(self.this_resolution)
+        self.resolution_choice.configure(values=self.this_resolution)
 
     def set_submenu_color(self, submenu, dict, option):
         for c in submenu:
@@ -552,6 +563,13 @@ class App(ctk.CTk):
         )
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
+        self.combobox_label1 = ctk.CTkLabel(
+            self.frame_option,
+            text="拡張子を選択",
+            font=("游ゴシック", 15)
+        )
+        self.combobox_label1.grid(row=2, column=0, padx=10, pady=(5,0), sticky="ew")
+
         self.dict_file = {
             "movie": ["mp4", "webm"],
             "audio": ["mp3", "wav", "m4a", "opus"],
@@ -563,25 +581,23 @@ class App(ctk.CTk):
             font=self.fonts,
             command=self.check_option,
         )
-        self.cmb_extension.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.cmb_extension.grid(row=3, column=0, padx=10, pady=(0,5), sticky="ew")
 
-        self.combobox_label = ctk.CTkLabel(
+        self.combobox_label2 = ctk.CTkLabel(
             self.frame_option,
             text="解像度を選択",
             font=("游ゴシック", 15)
         )
-        self.combobox_label.grid(row=3, column=0, padx=10, pady=(10,0), sticky="w")        
+        self.combobox_label2.grid(row=4, column=0, padx=10, pady=(5,0), sticky="ew")
 
-        self.resolution_size = {
-            "image": ["144", "240", "360", "480", "720", "1080", "1440", "2160", "4320"],
-        }
+        self.resolution_size = ["144", "240", "360", "480", "720", "1080", "1440", "2160", "4320"]
 
         self.resolution_choice = ctk.CTkComboBox(
             self.frame_option,
-            values=self.resolution_size["image"],
+            values=self.resolution_size,
             font=self.fonts,
         )
-        self.resolution_choice.grid(row=4, column=0, padx=10, pady=(0,10), sticky="w")
+        self.resolution_choice.grid(row=5, column=0, padx=10, pady=(0,5), sticky="ew")
 
     def paste(self):
         clip_text = pyperclip.paste()
@@ -597,6 +613,7 @@ class App(ctk.CTk):
     def start_get_info(self):
         self.thread_info = threading.Thread(target=self.get_info)
         self.thread_info.start()
+        self.get_resolution()
 
     def get_info(self):
         opt = {}
