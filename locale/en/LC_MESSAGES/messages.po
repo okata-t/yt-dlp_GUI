@@ -295,3 +295,6 @@ msgstr "Select Extension"
 
 msgid "解像度を選択"
 msgstr "Select Resolution"
+
+msgid "最高画質"
+msgstr "Best"

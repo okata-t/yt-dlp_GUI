@@ -295,3 +295,6 @@ msgstr "확장자 선택"
 
 msgid "解像度を選択"
 msgstr "해상도 선택"
+
+msgid "最高画質"
+msgstr "최고의 화질"

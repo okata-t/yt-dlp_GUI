@@ -40,7 +40,7 @@ default_config = [
     ("Option", "embed_thumbnail", "0"),
     ("Option", "extension", "mp4"),
     ("Option", "browser", ""),
-    ("Option", "resolution", "1080"),
+    ("Option", "resolution", "best"),
 ]
 
 
@@ -301,7 +301,11 @@ class App(ctk.CTk):
             config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
             config["Option"]["extension"] = str(self.cmb_extension.get())
             config["Option"]["browser"] = self.browser
-            config["Option"]["resolution"] = str(self.cmb_resoluion.get())
+            config["Option"]["resolution"] = (
+                str(self.cmb_resoluion.get())
+                if str(self.cmb_resoluion.get()) != _("最高画質")
+                else "best"
+            )
             config.write(f)
         if isQuick:
             self.withdraw()
@@ -316,7 +320,11 @@ class App(ctk.CTk):
             self.var_chk_thumbnail.set(config["Option"]["embed_thumbnail"])
             self.cmb_extension.set(config["Option"]["extension"])
             self.browser = config["Option"]["browser"]
-            self.cmb_resoluion.set(config["Option"]["resolution"])
+            self.cmb_resoluion.set(
+                config["Option"]["resolution"]
+                if config["Option"]["resolution"] != "best"
+                else _("最高画質")
+            )
         except KeyError:
             fix_config()
             self.load_option()
@@ -589,6 +597,7 @@ class App(ctk.CTk):
             "1440",
             "2160",
             "4320",
+            _("最高画質"),
         ]
 
         self.cmb_resoluion = ctk.CTkComboBox(
@@ -633,6 +642,7 @@ class App(ctk.CTk):
                 for i in range(len(self.resolution_size)):
                     if int(info["height"]) >= int(self.resolution_size[i]):
                         self.this_resolution.append(self.resolution_size[i])
+                self.this_resolution.append(_("最高画質"))
                 print(self.this_resolution)
                 self.cmb_resoluion.configure(values=self.this_resolution)
 
@@ -684,11 +694,15 @@ class App(ctk.CTk):
                 )
 
     def start_download(self):
-        format_text_mp4 = (
-            "bestvideo[ext=mp4][height<="
-            + str(self.cmb_resoluion.get())
-            + "]+bestaudio[ext=m4a]/best[ext=mp4]"
-        )
+        resolution = self.cmb_resoluion.get()
+        if resolution == _("最高画質"):
+            format_text_mp4 = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]"
+        else:
+            format_text_mp4 = (
+                "bestvideo[ext=mp4][height<="
+                + str(self.cmb_resoluion.get())
+                + "]+bestaudio[ext=m4a]/best[ext=mp4]"
+            )
 
         self.opt = {
             "progress_hooks": [self.progress_hook],
@@ -724,11 +738,16 @@ class App(ctk.CTk):
         embed_thumbnail = self.chk_thumbnail.get()
 
         if extension == "webm":
-            format_text_webm = (
-                "best[ext=webm]/bestvideo[height<="
-                + str(self.cmb_resoluion.get())
-                + "]+bestaudio/best[ext=mp4]"
-            )
+            if resolution == _("最高画質"):
+                format_text_mp4 = (
+                    "bestvideo[ext=webm]/bestvideo+bestaudio/best[ext=mp4]"
+                )
+            else:
+                format_text_webm = (
+                    "best[ext=webm]/bestvideo[height<="
+                    + str(self.cmb_resoluion.get())
+                    + "]+bestaudio/best[ext=mp4]"
+                )
 
             self.opt["format"] = format_text_webm
             self.opt["postprocessors"].append(
