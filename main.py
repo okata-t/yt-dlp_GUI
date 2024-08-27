@@ -47,7 +47,7 @@ default_config = [
 def read_config():
     if not os.path.exists(ini_path):
         fix_config()
-    config.read(ini_path, encoding="shift-jis")
+    config.read(ini_path, encoding="utf-8")
 
 
 def fix_config():
@@ -286,12 +286,19 @@ class App(ctk.CTk):
 
     def restart(self, app):
         app.write_config(False)
+        global _
+        _ = gettext.translation(
+            domain="messages",
+            localedir="locale",
+            languages=[self.language],
+            fallback=True,
+        ).gettext
         app = App()
         app.protocol("WM_DELETE_WINDOW", lambda: app.write_config(False))
         app.mainloop()
 
     def write_config(self, isQuick):
-        with open(ini_path, "w") as f:
+        with open(ini_path, "w", encoding="utf-8") as f:
             config["Directory"]["lastdir"] = self.ent_savedir.get()
             config["Directory"]["filename"] = self.ent_filename.get()
             config["Option"] = {}
@@ -369,13 +376,6 @@ class App(ctk.CTk):
 
     def select_language(self, language):
         self.language = language
-        global _
-        _ = gettext.translation(
-            domain="messages",
-            localedir="locale",
-            languages=[language],
-            fallback=True,
-        ).gettext
         self.restart(self)
 
     def select_appearance(self, appearance):
