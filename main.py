@@ -563,7 +563,25 @@ class App(ctk.CTk):
             font=self.fonts,
             command=self.check_option,
         )
-        self.cmb_extension.grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.cmb_extension.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+
+        self.resolution_size = {
+            "image": ["144", "240", "360", "480", "720", "1080", "1440", "2160", "4320"],
+        }
+
+        self.combobox_label = ctk.CTkLabel(
+            self.frame_option,
+            text="解像度を選択",
+            font=("游ゴシック", 15)
+        )
+        self.combobox_label.grid(row=3, column=0, padx=10, pady=(0,0), sticky="ew")        
+
+        self.resolution_choice = ctk.CTkComboBox(
+            self.frame_option,
+            values=self.resolution_size["image"],
+            font=self.fonts,
+        )
+        self.resolution_choice.grid(row=4, column=0, padx=10, pady=0, sticky="ew")
 
     def paste(self):
         clip_text = pyperclip.paste()
@@ -642,11 +660,13 @@ class App(ctk.CTk):
                 )
 
     def start_download(self):
+        format_text_mp4 = "bestvideo[ext=mp4][height<=" + str(self.resolution_choice.get()) + "]+bestaudio[ext=m4a]/best[ext=mp4]"
+
         self.opt = {
             "progress_hooks": [self.progress_hook],
             "postprocessor_hooks": [self.postprocessor_hook],
             "postprocessors": [],
-            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
+            "format": format_text_mp4,
         }
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
@@ -676,7 +696,9 @@ class App(ctk.CTk):
         embed_thumbnail = self.chk_thumbnail.get()
 
         if extension == "webm":
-            self.opt["format"] = "best[ext=webm]/bestvideo+bestaudio/best[ext=mp4]"
+            format_text_webm = "best[ext=webm]/bestvideo[height<=" + str(self.resolution_choice.get()) + "]+bestaudio/best[ext=mp4]"
+
+            self.opt["format"] = format_text_webm
             self.opt["postprocessors"].append(
                 {
                     "key": "FFmpegVideoConvertor",
