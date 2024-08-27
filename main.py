@@ -26,7 +26,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.5.1"
+VERSION = "v2.6.0"
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
@@ -40,6 +40,7 @@ default_config = [
     ("Option", "embed_thumbnail", "0"),
     ("Option", "extension", "mp4"),
     ("Option", "browser", ""),
+    ("Option", "resolution", "best"),
 ]
 
 
@@ -211,23 +212,23 @@ class App(ctk.CTk):
         self.submenu_language = dropdown_view.add_submenu(_("言語"))
         self.languages = []
         self.dict_language = {
-            _("日本語"): "jp",
-            _("English"): "en",
-            _("한국어"): "kr",
+            "日本語": "jp",
+            "English": "en",
+            "한국어": "kr",
         }
         self.languages.append(
             self.submenu_language.add_option(
-                _("日本語"), command=lambda: self.select_language("jp")
+                "日本語", command=lambda: self.select_language("jp")
             )
         )
         self.languages.append(
             self.submenu_language.add_option(
-                _("English"), command=lambda: self.select_language("en")
+                "English", command=lambda: self.select_language("en")
             )
         )
         self.languages.append(
             self.submenu_language.add_option(
-                _("한국어"), command=lambda: self.select_language("kr")
+                "한국어", command=lambda: self.select_language("kr")
             )
         )
 
@@ -300,6 +301,11 @@ class App(ctk.CTk):
             config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
             config["Option"]["extension"] = str(self.cmb_extension.get())
             config["Option"]["browser"] = self.browser
+            config["Option"]["resolution"] = (
+                str(self.cmb_resoluion.get())
+                if str(self.cmb_resoluion.get()) != _("最高画質")
+                else "best"
+            )
             config.write(f)
         if isQuick:
             self.withdraw()
@@ -314,13 +320,19 @@ class App(ctk.CTk):
             self.var_chk_thumbnail.set(config["Option"]["embed_thumbnail"])
             self.cmb_extension.set(config["Option"]["extension"])
             self.browser = config["Option"]["browser"]
+            self.cmb_resoluion.set(
+                config["Option"]["resolution"]
+                if config["Option"]["resolution"] != "best"
+                else _("最高画質")
+            )
         except KeyError:
-            self.fix_config()
+            fix_config()
             self.load_option()
 
     def check_option(self, *args):
         if self.var_chk_audio.get():
             self.cmb_extension.configure(values=self.dict_file["audio"])
+            self.cmb_resoluion.configure(state="disabled")
             if self.cmb_extension.get() == "wav":
                 self.var_chk_thumbnail.set(False)
                 self.chk_thumbnail.configure(state="disabled")
@@ -328,6 +340,7 @@ class App(ctk.CTk):
                 self.chk_thumbnail.configure(state="normal")
         else:
             self.cmb_extension.configure(values=self.dict_file["movie"])
+            self.cmb_resoluion.configure(state="normal")
             if self.cmb_extension.get() == "webm":
                 self.var_chk_thumbnail.set(False)
                 self.chk_thumbnail.configure(state="disabled")
@@ -379,18 +392,6 @@ class App(ctk.CTk):
         self.menu.configure(bg_color=self.color_menubar)
         self.btn_editname.configure(text_color=self.color_edit)
         self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
-
-    def get_resolution(self):
-        self.this_resolution = []
-        url = self.ent_url.get()
-        with yt_dlp.YoutubeDL() as ydl:
-            info = ydl.extract_info(url, download=False)
-            print("a")
-        for i in range(len(self.resolution_size)):
-            if int(info["height"]) >= int(self.resolution_size[i]):
-                self.this_resolution.append(self.resolution_size[i])
-        print(self.this_resolution)
-        self.resolution_choice.configure(values=self.this_resolution)
 
     def set_submenu_color(self, submenu, dict, option):
         for c in submenu:
@@ -564,11 +565,9 @@ class App(ctk.CTk):
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
         self.combobox_label1 = ctk.CTkLabel(
-            self.frame_option,
-            text="拡張子を選択",
-            font=("游ゴシック", 15)
+            self.frame_option, text=_("拡張子を選択"), font=self.fonts
         )
-        self.combobox_label1.grid(row=2, column=0, padx=10, pady=(5,0), sticky="ew")
+        self.combobox_label1.grid(row=2, column=0, padx=10, pady=(5, 0), sticky="ew")
 
         self.dict_file = {
             "movie": ["mp4", "webm"],
@@ -581,23 +580,33 @@ class App(ctk.CTk):
             font=self.fonts,
             command=self.check_option,
         )
-        self.cmb_extension.grid(row=3, column=0, padx=10, pady=(0,5), sticky="ew")
+        self.cmb_extension.grid(row=3, column=0, padx=10, pady=(0, 5), sticky="ew")
 
         self.combobox_label2 = ctk.CTkLabel(
-            self.frame_option,
-            text="解像度を選択",
-            font=("游ゴシック", 15)
+            self.frame_option, text=_("解像度を選択"), font=self.fonts
         )
-        self.combobox_label2.grid(row=4, column=0, padx=10, pady=(5,0), sticky="ew")
+        self.combobox_label2.grid(row=4, column=0, padx=10, pady=(5, 0), sticky="ew")
 
-        self.resolution_size = ["144", "240", "360", "480", "720", "1080", "1440", "2160", "4320"]
+        self.resolution_size = [
+            "144",
+            "240",
+            "360",
+            "480",
+            "720",
+            "1080",
+            "1440",
+            "2160",
+            "4320",
+            _("最高画質"),
+        ]
 
-        self.resolution_choice = ctk.CTkComboBox(
+        self.cmb_resoluion = ctk.CTkComboBox(
             self.frame_option,
             values=self.resolution_size,
             font=self.fonts,
+            command=self.check_option,
         )
-        self.resolution_choice.grid(row=5, column=0, padx=10, pady=(0,5), sticky="ew")
+        self.cmb_resoluion.grid(row=5, column=0, padx=10, pady=(0, 5), sticky="ew")
 
     def paste(self):
         clip_text = pyperclip.paste()
@@ -613,10 +622,10 @@ class App(ctk.CTk):
     def start_get_info(self):
         self.thread_info = threading.Thread(target=self.get_info)
         self.thread_info.start()
-        self.get_resolution()
 
     def get_info(self):
         opt = {}
+        self.this_resolution = []
         url = self.ent_url.get()
         if self.browser != "":
             opt["cookiesfrombrowser"] = (self.browser,)
@@ -627,7 +636,15 @@ class App(ctk.CTk):
                     "title": info["title"],
                     "duration": info["duration"],
                     "tumbnail": info["thumbnail"],
+                    "height": info["height"],
                 }
+
+                for i in range(len(self.resolution_size)):
+                    if int(info["height"]) >= int(self.resolution_size[i]):
+                        self.this_resolution.append(self.resolution_size[i])
+                self.this_resolution.append(_("最高画質"))
+                print(self.this_resolution)
+                self.cmb_resoluion.configure(values=self.this_resolution)
 
                 self.lbl_info_title.configure(text=info["title"])
                 self.lbl_info_title.grid(
@@ -677,7 +694,15 @@ class App(ctk.CTk):
                 )
 
     def start_download(self):
-        format_text_mp4 = "bestvideo[ext=mp4][height<=" + str(self.resolution_choice.get()) + "]+bestaudio[ext=m4a]/best[ext=mp4]"
+        resolution = self.cmb_resoluion.get()
+        if resolution == _("最高画質"):
+            format_text_mp4 = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]"
+        else:
+            format_text_mp4 = (
+                "bestvideo[ext=mp4][height<="
+                + str(self.cmb_resoluion.get())
+                + "]+bestaudio[ext=m4a]/best[ext=mp4]"
+            )
 
         self.opt = {
             "progress_hooks": [self.progress_hook],
@@ -713,7 +738,16 @@ class App(ctk.CTk):
         embed_thumbnail = self.chk_thumbnail.get()
 
         if extension == "webm":
-            format_text_webm = "best[ext=webm]/bestvideo[height<=" + str(self.resolution_choice.get()) + "]+bestaudio/best[ext=mp4]"
+            if resolution == _("最高画質"):
+                format_text_mp4 = (
+                    "bestvideo[ext=webm]/bestvideo+bestaudio/best[ext=mp4]"
+                )
+            else:
+                format_text_webm = (
+                    "best[ext=webm]/bestvideo[height<="
+                    + str(self.cmb_resoluion.get())
+                    + "]+bestaudio/best[ext=mp4]"
+                )
 
             self.opt["format"] = format_text_webm
             self.opt["postprocessors"].append(

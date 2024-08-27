@@ -289,3 +289,12 @@ msgstr "Appeareance"
 
 msgid "yt-dlp_GUIを終了する"
 msgstr "Exit yt-dlp_GUI"
+
+msgid "拡張子を選択"
+msgstr "Select Extension"
+
+msgid "解像度を選択"
+msgstr "Select Resolution"
+
+msgid "最高画質"
+msgstr "Best"
