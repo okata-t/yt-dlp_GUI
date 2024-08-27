@@ -563,25 +563,25 @@ class App(ctk.CTk):
             font=self.fonts,
             command=self.check_option,
         )
-        self.cmb_extension.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-
-        self.resolution_size = {
-            "image": ["144", "240", "360", "480", "720", "1080", "1440", "2160", "4320"],
-        }
+        self.cmb_extension.grid(row=2, column=0, padx=10, pady=10, sticky="w")
 
         self.combobox_label = ctk.CTkLabel(
             self.frame_option,
             text="解像度を選択",
             font=("游ゴシック", 15)
         )
-        self.combobox_label.grid(row=3, column=0, padx=10, pady=(0,0), sticky="ew")        
+        self.combobox_label.grid(row=3, column=0, padx=10, pady=(10,0), sticky="w")        
+
+        self.resolution_size = {
+            "image": ["144", "240", "360", "480", "720", "1080", "1440", "2160", "4320"],
+        }
 
         self.resolution_choice = ctk.CTkComboBox(
             self.frame_option,
             values=self.resolution_size["image"],
             font=self.fonts,
         )
-        self.resolution_choice.grid(row=4, column=0, padx=10, pady=0, sticky="ew")
+        self.resolution_choice.grid(row=4, column=0, padx=10, pady=(0,10), sticky="w")
 
     def paste(self):
         clip_text = pyperclip.paste()
