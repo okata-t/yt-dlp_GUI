@@ -26,7 +26,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.6.0"
+VERSION = "v2.6.1"
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
@@ -639,7 +639,7 @@ class App(ctk.CTk):
                     "height": info["height"],
                 }
 
-                for i in range(len(self.resolution_size)):
+                for i in range(len(self.resolution_size) - 1):
                     if int(info["height"]) >= int(self.resolution_size[i]):
                         self.this_resolution.append(self.resolution_size[i])
                 self.this_resolution.append(_("最高画質"))
