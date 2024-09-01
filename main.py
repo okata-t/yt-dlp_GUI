@@ -41,6 +41,7 @@ default_config = [
     ("Option", "extension", "mp4"),
     ("Option", "browser", ""),
     ("Option", "resolution", "best"),
+    ("Option", "log_version", VERSION),
 ]
 
 
@@ -88,15 +89,16 @@ class App(ctk.CTk):
         self.set_submenu_color(self.languages, self.dict_language, self.language)
         self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
         self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
+        # self.get_release_note("https://github.com/okata-t/yt-dlp_GUI/releases")
 
     def get_latest_version(self):
-        #apiでバージョンを取得
+        # apiでバージョンを取得
         r = requests.get(
             "https://api.github.com/repos/okata-t/yt-dlp_GUI/releases/latest"
         )
         try:
             latest_version = r.json()["tag_name"]
-        #api呼び出し上限の際、スクレイピングでバージョンを取得
+        # api呼び出し上限の際、スクレイピングでバージョンを取得
         except KeyError:
             url = "https://github.com/okata-t/yt-dlp_GUI/releases/latest"
             response = requests.get(url)
@@ -104,25 +106,28 @@ class App(ctk.CTk):
             latest_version = soup.find(class_="d-inline mr-3").text[11:]
         return latest_version
 
-
     def get_release_note(self, url):
-    #スクレイピングしたtxtの保存場所を指定
+        # スクレイピングしたtxtの保存場所を指定
         log_file = "log.txt"
-
-        #key→辞書型変換の際に必要な変数を定義
+        if not os.path.exists(log_file):
+            with open(log_file, "w") as f:
+                f.write("")
+        # key→辞書型変換の際に必要な変数を定義
         Mode = 1
         value = ""
         dic = {}
 
-        #logファイルが0バイト、またはアプデ前の状態だった場合はスクレイピングを行う
+        # logファイルが0バイト、またはアプデ前の状態だった場合はスクレイピングを行う
         latest_version = self.get_latest_version()
 
-        if os.stat(log_file).st_size == 0 or version.parse(self.this_log_version) < version.parse(latest_version):
-            #logのバージョンを更新
+        if os.stat(log_file).st_size == 0 or version.parse(
+            self.this_log_version
+        ) < version.parse(latest_version):
+            # logのバージョンを更新
             self.this_log_version = latest_version
             config["Option"]["log_version"] = self.this_log_version
 
-            #releasesのページ数を取得
+            # releasesのページ数を取得
             response = requests.get(url)
             soup = BeautifulSoup(response.text, "html.parser")
             page = soup.find_all(class_="pagination")
@@ -130,13 +135,13 @@ class App(ctk.CTk):
                 page_num = int(page.text[-6:-5])
                 break
 
-            #log.txtの中身を0バイトにして初期化
+            # log.txtの中身を0バイトにして初期化
             with open(log_file, mode="w") as f:
                 f.truncate(0)
 
-            #releasesのバージョン・変更履歴をtxtで取得
+            # releasesのバージョン・変更履歴をtxtで取得
             for i in range(page_num):
-                url_page_num = url + "?page=" + str(i+1)
+                url_page_num = url + "?page=" + str(i + 1)
                 response = requests.get(url_page_num)
                 soup = BeautifulSoup(response.text, "html.parser")
                 note = soup.find_all(class_="Box-body")
@@ -147,17 +152,17 @@ class App(ctk.CTk):
                     changes = note.find_all(class_="markdown-body my-3")
 
                     for ver in versions:
-                        with open(log_file, mode='a', encoding='utf-8') as f:
+                        with open(log_file, mode="a", encoding="utf-8") as f:
                             f.write(ver.text + "\n")
 
                     for change in changes:
-                        with open(log_file, mode='a', encoding='utf-8') as f:
+                        with open(log_file, mode="a", encoding="utf-8") as f:
                             f.write(change.text + "\n")
                             f.write("\n")
                             f.write("---\n")
 
-            #大量に付随してくる余計なヌル文字を削除。ついでに「latest」表記も削除
-            with open(log_file, 'r+', encoding="UTF-8") as f:
+            # 大量に付随してくる余計なヌル文字を削除。ついでに「latest」表記も削除
+            with open(log_file, "r+", encoding="UTF-8") as f:
                 lines = f.readlines()
                 f.seek(0)
                 f.truncate()
@@ -166,8 +171,8 @@ class App(ctk.CTk):
                     if i not in lines_to_delete and line.strip():
                         f.write(line)
 
-        #バージョン・変更履歴をtxtから辞書型に変換
-        with open('log.txt', encoding="utf-8") as f:
+        # バージョン・変更履歴をtxtから辞書型に変換
+        with open("log.txt", encoding="utf-8") as f:
             for line in f:
                 if line == "---\n":
                     dic[key] = value
