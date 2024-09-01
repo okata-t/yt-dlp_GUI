@@ -47,7 +47,7 @@ default_config = [
 def read_config():
     if not os.path.exists(ini_path):
         fix_config()
-    config.read(ini_path, encoding="utf-8")
+    config.read(ini_path, encoding="shift-jis")
 
 
 def fix_config():
@@ -89,19 +89,101 @@ class App(ctk.CTk):
         self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
         self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
 
-    def check_version(self, this_version):
+    def get_latest_version(self):
+        #apiでバージョンを取得
         r = requests.get(
             "https://api.github.com/repos/okata-t/yt-dlp_GUI/releases/latest"
         )
-
-        # API呼び出し上限の場合、スクレイピングしてバージョンを取得
         try:
             latest_version = r.json()["tag_name"]
+        #api呼び出し上限の際、スクレイピングでバージョンを取得
         except KeyError:
             url = "https://github.com/okata-t/yt-dlp_GUI/releases/latest"
             response = requests.get(url)
             soup = BeautifulSoup(response.text, "html.parser")
             latest_version = soup.find(class_="d-inline mr-3").text[11:]
+        return latest_version
+
+
+    def get_release_note(self, url):
+    #スクレイピングしたtxtの保存場所を指定
+        log_file = "log.txt"
+
+        #key→辞書型変換の際に必要な変数を定義
+        Mode = 1
+        value = ""
+        dic = {}
+
+        #logファイルが0バイト、またはアプデ前の状態だった場合はスクレイピングを行う
+        latest_version = self.get_latest_version()
+
+        if os.stat(log_file).st_size == 0 or version.parse(self.this_log_version) < version.parse(latest_version):
+            #logのバージョンを更新
+            self.this_log_version = latest_version
+            config["Option"]["log_version"] = self.this_log_version
+
+            #releasesのページ数を取得
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, "html.parser")
+            page = soup.find_all(class_="pagination")
+            for page in page:
+                page_num = int(page.text[-6:-5])
+                break
+
+            #log.txtの中身を0バイトにして初期化
+            with open(log_file, mode="w") as f:
+                f.truncate(0)
+
+            #releasesのバージョン・変更履歴をtxtで取得
+            for i in range(page_num):
+                url_page_num = url + "?page=" + str(i+1)
+                response = requests.get(url_page_num)
+                soup = BeautifulSoup(response.text, "html.parser")
+                note = soup.find_all(class_="Box-body")
+
+                for note in note:
+                    # バージョンと変更履歴の要素を抽出
+                    versions = note.find_all(class_="Link--primary Link")
+                    changes = note.find_all(class_="markdown-body my-3")
+
+                    for ver in versions:
+                        with open(log_file, mode='a', encoding='utf-8') as f:
+                            f.write(ver.text + "\n")
+
+                    for change in changes:
+                        with open(log_file, mode='a', encoding='utf-8') as f:
+                            f.write(change.text + "\n")
+                            f.write("\n")
+                            f.write("---\n")
+
+            #大量に付随してくる余計なヌル文字を削除。ついでに「latest」表記も削除
+            with open(log_file, 'r+', encoding="UTF-8") as f:
+                lines = f.readlines()
+                f.seek(0)
+                f.truncate()
+                lines_to_delete = [5, 11]
+                for i, line in enumerate(lines):
+                    if i not in lines_to_delete and line.strip():
+                        f.write(line)
+
+        #バージョン・変更履歴をtxtから辞書型に変換
+        with open('log.txt', encoding="utf-8") as f:
+            for line in f:
+                if line == "---\n":
+                    dic[key] = value
+                    value = ""
+                    Mode = 1
+                else:
+                    if Mode == 1:
+                        key = line.strip()
+                        Mode = 0
+                    else:
+                        value += line
+
+        return dic
+
+    def check_version(self, this_version):
+        latest_version = self.get_latest_version()
 
         if version.parse(this_version) < version.parse(latest_version):
             msg = CTkMessagebox.CTkMessagebox(
@@ -286,19 +368,12 @@ class App(ctk.CTk):
 
     def restart(self, app):
         app.write_config(False)
-        global _
-        _ = gettext.translation(
-            domain="messages",
-            localedir="locale",
-            languages=[self.language],
-            fallback=True,
-        ).gettext
         app = App()
         app.protocol("WM_DELETE_WINDOW", lambda: app.write_config(False))
         app.mainloop()
 
     def write_config(self, isQuick):
-        with open(ini_path, "w", encoding="utf-8") as f:
+        with open(ini_path, "w") as f:
             config["Directory"]["lastdir"] = self.ent_savedir.get()
             config["Directory"]["filename"] = self.ent_filename.get()
             config["Option"] = {}
@@ -313,6 +388,7 @@ class App(ctk.CTk):
                 if str(self.cmb_resoluion.get()) != _("最高画質")
                 else "best"
             )
+            config["Option"]["log_version"] = self.this_log_version
             config.write(f)
         if isQuick:
             self.withdraw()
@@ -332,6 +408,7 @@ class App(ctk.CTk):
                 if config["Option"]["resolution"] != "best"
                 else _("最高画質")
             )
+            self.this_log_version = config["Option"]["log_version"]
         except KeyError:
             fix_config()
             self.load_option()
@@ -376,6 +453,13 @@ class App(ctk.CTk):
 
     def select_language(self, language):
         self.language = language
+        global _
+        _ = gettext.translation(
+            domain="messages",
+            localedir="locale",
+            languages=[language],
+            fallback=True,
+        ).gettext
         self.restart(self)
 
     def select_appearance(self, appearance):
