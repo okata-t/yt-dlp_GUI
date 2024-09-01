@@ -168,3 +168,6 @@ theme.json
 color.ini
 msgfmt.py
 pygettext.py
+scraping.py
+scraping_old.py
+log.txt
