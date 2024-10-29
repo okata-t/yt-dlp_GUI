@@ -298,3 +298,6 @@ msgstr "Select Resolution"
 
 msgid "最高画質"
 msgstr "Best"
+
+msgid "変更履歴"
+msgstr "Change Log"
