@@ -785,6 +785,7 @@ class App(ctk.CTk):
             "postprocessor_hooks": [self.postprocessor_hook],
             "postprocessors": [],
             "format": format_text_mp4,
+            "ignoreerrors": "only_download",
         }
         file_path = self.ent_savedir.get()
         file_name = self.ent_filename.get()
