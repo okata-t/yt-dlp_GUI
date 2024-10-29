@@ -26,7 +26,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.6.1"
+VERSION = "v2.7.0"
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
@@ -89,7 +89,6 @@ class App(ctk.CTk):
         self.set_submenu_color(self.languages, self.dict_language, self.language)
         self.set_submenu_color(self.appearances, self.dict_appearance, self.appearance)
         self.set_submenu_color(self.cookies, self.dict_browser, self.browser)
-        # self.get_release_note("https://github.com/okata-t/yt-dlp_GUI/releases")
 
     def get_latest_version(self):
         # apiでバージョンを取得
@@ -112,10 +111,6 @@ class App(ctk.CTk):
         if not os.path.exists(log_file):
             with open(log_file, "w") as f:
                 f.write("")
-        # key→辞書型変換の際に必要な変数を定義
-        Mode = 1
-        value = ""
-        dic = {}
 
         # logファイルが0バイト、またはアプデ前の状態だった場合はスクレイピングを行う
         latest_version = self.get_latest_version()
@@ -171,26 +166,17 @@ class App(ctk.CTk):
                     if i not in lines_to_delete and line.strip():
                         f.write(line)
 
-        # バージョン・変更履歴をtxtから辞書型に変換
-        with open("log.txt", encoding="utf-8") as f:
-            for line in f:
-                if line == "---\n":
-                    dic[key] = value
-                    value = ""
-                    Mode = 1
-                else:
-                    if Mode == 1:
-                        key = line.strip()
-                        Mode = 0
-                    else:
-                        value += line
-
-        return dic
+    def view_release_note(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = ViewRelease(self)
+        else:
+            self.toplevel_window.focus()
 
     def check_version(self, this_version):
         latest_version = self.get_latest_version()
 
         if version.parse(this_version) < version.parse(latest_version):
+            self.get_release_note("https://github.com/okata-t/yt-dlp_GUI/releases")
             msg = CTkMessagebox.CTkMessagebox(
                 title=_("アップデート"),
                 message=_("新しいバージョン：")
@@ -369,6 +355,7 @@ class App(ctk.CTk):
 
         dropdown_beta.add_option(_("クイックモード"), command=self.start_quick)
 
+        dropdown_others.add_option(_("変更履歴"), command=self.view_release_note)
         dropdown_others.add_option(_("アンインストール"), command=self.uninstall)
 
     def restart(self, app):
@@ -982,6 +969,60 @@ class App(ctk.CTk):
         self.write_config(True)
         thread = threading.Thread(target=QuickMode)
         thread.start()
+
+
+class ReleaseFrame(ctk.CTkScrollableFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.fonts = ("游ゴシック", 15)
+
+        # key→辞書型変換の際に必要な変数を定義
+        Mode = 1
+        key = ""
+        value = ""
+        dic = {}
+        text = ""
+
+        # バージョン・変更履歴をtxtから辞書型に変換
+        with open("log.txt", encoding="utf-8") as f:
+            for line in f:
+                if line == "---\n":
+                    dic[key] = value
+                    value = ""
+                    Mode = 1
+                else:
+                    if Mode == 1:
+                        key = line.strip()
+                        Mode = 0
+                    else:
+                        value += line
+
+        keys = list(dic.keys())
+        for i in range(len(dic)):
+            key = keys[i]
+            value = dic[key]
+            text += keys[i] + "\n" + value + "\n"
+
+        lbl_release = ctk.CTkLabel(
+            self, text=text, font=self.fonts, justify="left", anchor="w"
+        )
+        lbl_release.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+
+class ViewRelease(ctk.CTkToplevel):
+    def __init__(self, master):
+        super().__init__(master)
+        self.fonts = ("游ゴシック", 15)
+        self.title(_("変更履歴"))
+        self.geometry("640x480")
+        self.after(100, self.focus)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        self.frame_release = ReleaseFrame(self)
+        self.frame_release.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
 
 class EditFilename(ctk.CTkToplevel):

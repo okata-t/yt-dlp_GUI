@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 def get_release_note(url):
     # releasesのページ数を取得
     response = requests.get(url)
@@ -13,7 +14,7 @@ def get_release_note(url):
     # バージョンと変更履歴を直接辞書型に変換
     releases = {}
     for i in range(page_num):
-        url_page_num = url + "?page=" + str(i+1)
+        url_page_num = url + "?page=" + str(i + 1)
         response = requests.get(url_page_num)
         soup = BeautifulSoup(response.text, "html.parser")
         note = soup.find_all(class_="Box-body")
@@ -30,6 +31,7 @@ def get_release_note(url):
             releases[version] = changes
 
     return releases
+
 
 if __name__ == "__main__":
     url = "https://github.com/okata-t/yt-dlp_GUI/releases"

@@ -169,3 +169,5 @@ color.ini
 msgfmt.py
 pygettext.py
 log.txt
+scraping.py
+scraping_2.py
