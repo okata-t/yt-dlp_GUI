@@ -167,6 +167,7 @@ class App(ctk.CTk):
                         f.write(line)
 
     def view_release_note(self):
+        self.get_release_note("https://github.com/okata-t/yt-dlp_GUI/releases")
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = ViewRelease(self)
         else:
@@ -176,7 +177,6 @@ class App(ctk.CTk):
         latest_version = self.get_latest_version()
 
         if version.parse(this_version) < version.parse(latest_version):
-            self.get_release_note("https://github.com/okata-t/yt-dlp_GUI/releases")
             msg = CTkMessagebox.CTkMessagebox(
                 title=_("アップデート"),
                 message=_("新しいバージョン：")
