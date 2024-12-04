@@ -301,3 +301,9 @@ msgstr "Best"
 
 msgid "変更履歴"
 msgstr "Change Log"
+
+msgid "サムネイルのみダウンロード"
+msgstr "Only Download Thumbnail"
+
+msgid "メタデータを埋め込む"
+msgstr "Embed Metadata"

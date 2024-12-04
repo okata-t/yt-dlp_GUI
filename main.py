@@ -26,7 +26,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.6.2"
+VERSION = "v2.7.0"
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
@@ -38,6 +38,8 @@ default_config = [
     ("Option", "appearance", "System"),
     ("Option", "download_audio", "0"),
     ("Option", "embed_thumbnail", "0"),
+    ("Option", "only_thumbnail", "0"),
+    ("Option", "add_metadata", "0"),
     ("Option", "extension", "mp4"),
     ("Option", "browser", ""),
     ("Option", "resolution", "best"),
@@ -373,6 +375,8 @@ class App(ctk.CTk):
             config["Option"]["appearance"] = self.appearance
             config["Option"]["download_audio"] = str(self.chk_audio.get())
             config["Option"]["embed_thumbnail"] = str(self.chk_thumbnail.get())
+            config["Option"]["only_thumbnail"] = str(self.chk_onlythumbnail.get())
+            config["Option"]["add_metadata"] = str(self.chk_metadata.get())
             config["Option"]["extension"] = str(self.cmb_extension.get())
             config["Option"]["browser"] = self.browser
             config["Option"]["resolution"] = (
@@ -393,6 +397,8 @@ class App(ctk.CTk):
             self.appearance = config["Option"]["appearance"]
             self.var_chk_audio.set(config["Option"]["download_audio"])
             self.var_chk_thumbnail.set(config["Option"]["embed_thumbnail"])
+            self.var_chk_onlythumbnail.set(config["Option"]["only_thumbnail"])
+            self.var_chk_metadata.set(config["Option"]["add_metadata"])
             self.cmb_extension.set(config["Option"]["extension"])
             self.browser = config["Option"]["browser"]
             self.cmb_resoluion.set(
@@ -432,6 +438,12 @@ class App(ctk.CTk):
             self.ent_duration_start.configure(state="disabled")
             self.lbl_duration_hyphen.configure(state="disabled")
             self.ent_duration_end.configure(state="disabled")
+
+        if self.var_chk_onlythumbnail.get():
+            self.var_chk_thumbnail.set(False)
+            self.chk_thumbnail.configure(state="disabled")
+        else:
+            self.chk_thumbnail.configure(state="normal")
 
     def change_extension(self, mode):
         if self.var_chk_audio.get():
@@ -640,10 +652,29 @@ class App(ctk.CTk):
         )
         self.chk_thumbnail.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
+        self.var_chk_onlythumbnail = ctk.BooleanVar()
+        self.chk_onlythumbnail = ctk.CTkCheckBox(
+            self.frame_option,
+            text=_("サムネイルのみダウンロード"),
+            font=self.fonts,
+            variable=self.var_chk_onlythumbnail,
+            command=self.check_option,
+        )
+        self.chk_onlythumbnail.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+
+        self.var_chk_metadata = ctk.BooleanVar()
+        self.chk_metadata = ctk.CTkCheckBox(
+            self.frame_option,
+            text=_("メタデータを埋め込む"),
+            font=self.fonts,
+            variable=self.var_chk_metadata,
+        )
+        self.chk_metadata.grid(row=3, column=0, padx=10, pady=10, sticky="ew")
+
         self.combobox_label1 = ctk.CTkLabel(
             self.frame_option, text=_("拡張子を選択"), font=self.fonts
         )
-        self.combobox_label1.grid(row=2, column=0, padx=10, pady=(5, 0), sticky="ew")
+        self.combobox_label1.grid(row=4, column=0, padx=10, pady=(5, 0), sticky="ew")
 
         self.dict_file = {
             "movie": ["mp4", "webm"],
@@ -656,12 +687,12 @@ class App(ctk.CTk):
             font=self.fonts,
             command=self.check_option,
         )
-        self.cmb_extension.grid(row=3, column=0, padx=10, pady=(0, 5), sticky="ew")
+        self.cmb_extension.grid(row=5, column=0, padx=10, pady=(0, 5), sticky="ew")
 
         self.combobox_label2 = ctk.CTkLabel(
             self.frame_option, text=_("解像度を選択"), font=self.fonts
         )
-        self.combobox_label2.grid(row=4, column=0, padx=10, pady=(5, 0), sticky="ew")
+        self.combobox_label2.grid(row=6, column=0, padx=10, pady=(5, 0), sticky="ew")
 
         self.resolution_size = [
             "144",
@@ -682,7 +713,7 @@ class App(ctk.CTk):
             font=self.fonts,
             command=self.check_option,
         )
-        self.cmb_resoluion.grid(row=5, column=0, padx=10, pady=(0, 5), sticky="ew")
+        self.cmb_resoluion.grid(row=7, column=0, padx=10, pady=(0, 5), sticky="ew")
 
     def paste(self):
         clip_text = pyperclip.paste()
@@ -813,6 +844,8 @@ class App(ctk.CTk):
         extension = self.cmb_extension.get()
         download_audio = self.chk_audio.get()
         embed_thumbnail = self.chk_thumbnail.get()
+        only_thumbnail = self.chk_onlythumbnail.get()
+        add_metadata = self.chk_metadata.get()
 
         if extension == "webm":
             if resolution == _("最高画質"):
@@ -868,6 +901,18 @@ class App(ctk.CTk):
         if embed_thumbnail:
             self.opt["writethumbnail"] = True
             self.opt["postprocessors"].append({"key": "EmbedThumbnail"})
+
+        if only_thumbnail:
+            self.opt["writethumbnail"] = True
+            self.opt["skip_download"] = True
+
+        if add_metadata:
+            self.opt["postprocessors"].append(
+                {
+                    "key": "FFmpegMetadata",
+                    "add_metadata": True,
+                }
+            )
 
         if self.browser != "":
             self.opt["cookiesfrombrowser"] = (self.browser,)
