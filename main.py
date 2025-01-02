@@ -26,7 +26,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.7.0"
+VERSION = "v2.7.1"
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
@@ -803,14 +803,13 @@ class App(ctk.CTk):
     def start_download(self):
         resolution = self.cmb_resoluion.get()
         if resolution == _("最高画質"):
-            format_text_mp4 = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]"
+            format_text_mp4 = "bestvideo+bestaudio/best[ext=mp4]"
         else:
             format_text_mp4 = (
                 "bestvideo[ext=mp4][height<="
                 + str(self.cmb_resoluion.get())
-                + "]+bestaudio[ext=m4a]/best[ext=mp4]"
+                + "]+bestaudio/best[ext=mp4]"
             )
-
         self.opt = {
             "progress_hooks": [self.progress_hook],
             "postprocessor_hooks": [self.postprocessor_hook],
@@ -1003,7 +1002,10 @@ class App(ctk.CTk):
                     text=self.filename + _("\nダウンロード完了")
                 )
                 self.lbl_eta.configure(text="\n")
-                toast("yt-dlp_GUI", _("ダウンロードが完了しました"))
+                toast(
+                    "yt-dlp_GUI",
+                    _("ダウンロードが完了しました") + "\n" + d["info_dict"]["title"],
+                )
 
     def edit_filename(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
