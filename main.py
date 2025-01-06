@@ -19,6 +19,7 @@ import pyperclip
 import requests
 import yt_dlp
 from bs4 import BeautifulSoup
+from icecream import ic
 from packaging import version
 from PIL import Image
 from pystray import Icon, Menu, MenuItem
@@ -26,7 +27,9 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.7.1"
+VERSION = "v2.7.2"
+
+ic.disable()
 
 config = configparser.ConfigParser(interpolation=None)
 ini_path = "config.ini"
@@ -803,10 +806,15 @@ class App(ctk.CTk):
     def start_download(self):
         resolution = self.cmb_resoluion.get()
         if resolution == _("最高画質"):
-            format_text_mp4 = "bestvideo+bestaudio/best[ext=mp4]"
+            format_text_mp4 = (
+                "bestvideo[ext=mp4]+bestaudio[ext=m4a]/"
+                + "bestvideo[ext=mp4]+bestaudio/best[ext=mp4]"
+            )
         else:
             format_text_mp4 = (
                 "bestvideo[ext=mp4][height<="
+                + str(self.cmb_resoluion.get())
+                + "]+bestaudio[ext=m4a]/bestvideo[ext=mp4][height<="
                 + str(self.cmb_resoluion.get())
                 + "]+bestaudio/best[ext=mp4]"
             )
@@ -848,7 +856,7 @@ class App(ctk.CTk):
 
         if extension == "webm":
             if resolution == _("最高画質"):
-                format_text_mp4 = (
+                format_text_webm = (
                     "bestvideo[ext=webm]/bestvideo+bestaudio/best[ext=mp4]"
                 )
             else:
@@ -924,6 +932,7 @@ class App(ctk.CTk):
         self.thread_download.start()
 
     def download(self, url):
+        ic(self.opt)
         self.pbar_progress.set(0)
         self.lbl_progress.configure(text=_("\n準備中"))
         self.lbl_eta.configure(text="\n")
