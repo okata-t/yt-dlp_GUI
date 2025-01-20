@@ -27,7 +27,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.7.2"
+VERSION = "v2.7.3"
 
 ic.disable()
 
@@ -47,6 +47,7 @@ default_config = [
     ("Option", "browser", ""),
     ("Option", "resolution", "best"),
     ("Option", "log_version", VERSION),
+    ("Option", "notification", "0"),
 ]
 
 
@@ -218,6 +219,9 @@ class App(ctk.CTk):
             if cp.returncode == 0:
                 sys.exit()
 
+    def enable_notification(self):
+        self.notification = str(int(self.notification) + 1)
+
     # メニューバーを追加
     def create_menu(self):
         self.color_selected = "#808080"
@@ -361,6 +365,7 @@ class App(ctk.CTk):
         dropdown_beta.add_option(_("クイックモード"), command=self.start_quick)
 
         dropdown_others.add_option(_("変更履歴"), command=self.view_release_note)
+        dropdown_others.add_option(_("通知オン"), command=self.enable_notification)
         dropdown_others.add_option(_("アンインストール"), command=self.uninstall)
 
     def restart(self, app):
@@ -388,6 +393,7 @@ class App(ctk.CTk):
                 else "best"
             )
             config["Option"]["log_version"] = self.this_log_version
+            config["Option"]["notification"] = str(self.notification)
             config.write(f)
         if isQuick:
             self.withdraw()
@@ -410,6 +416,7 @@ class App(ctk.CTk):
                 else _("最高画質")
             )
             self.this_log_version = config["Option"]["log_version"]
+            self.notification = config["Option"]["notification"]
         except KeyError:
             fix_config()
             self.load_option()
@@ -1014,6 +1021,14 @@ class App(ctk.CTk):
                 toast(
                     "yt-dlp_GUI",
                     _("ダウンロードが完了しました") + "\n" + d["info_dict"]["title"],
+                    app_id=(
+                        "yt-dlp_GUI"
+                        + (
+                            ""
+                            if self.notification == "0"
+                            else ("_" + self.notification)
+                        )
+                    ),
                 )
 
     def edit_filename(self):

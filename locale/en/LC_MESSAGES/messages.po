@@ -307,3 +307,6 @@ msgstr "Only Download Thumbnail"
 
 msgid "メタデータを埋め込む"
 msgstr "Embed Metadata"
+
+msgid "通知オン"
+msgstr "Enable Notification"
