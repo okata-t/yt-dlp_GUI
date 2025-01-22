@@ -27,7 +27,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.7.3"
+VERSION = "v2.7.4"
 
 ic.disable()
 
