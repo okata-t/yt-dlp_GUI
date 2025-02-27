@@ -4,6 +4,7 @@ import gettext
 import io
 import math
 import os
+import queue
 import subprocess
 import sys
 import threading
@@ -27,7 +28,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.7.4"
+VERSION = "v2.8.0"
 
 ic.disable()
 
@@ -72,6 +73,9 @@ class App(ctk.CTk):
 
     def __init__(self):
         super().__init__()
+
+        self.download_queue = queue.Queue()
+        self.downloading = False
 
         # Windowsのテーマ色設定。"Light" or "Dark"
         self.color_mode = darkdetect.theme()
@@ -933,26 +937,34 @@ class App(ctk.CTk):
 
         self.opt["outtmpl"] = file_path + "/" + file_name + ".%(ext)s"
         self.download_finished = 1 if download_audio else 2
-        self.thread_download = threading.Thread(
-            target=self.download, args=(url,), daemon=True
-        )
-        self.thread_download.start()
 
-    def download(self, url):
-        ic(self.opt)
-        self.pbar_progress.set(0)
-        self.lbl_progress.configure(text=_("\n準備中"))
-        self.lbl_eta.configure(text="\n")
-        with yt_dlp.YoutubeDL(self.opt) as ydl:
-            try:
-                ydl.download(url)
-            except Exception as e:
-                CTkMessagebox.CTkMessagebox(
-                    title=_("エラーが発生しました"),
-                    message=e,
-                    icon="cancel",
-                    font=self.fonts,
-                )
+        self.download_queue.put(url)
+
+        if not self.downloading:
+            self.thread_download = threading.Thread(target=self.download, daemon=True)
+            self.thread_download.start()
+
+    def download(self):
+        while self.download_queue.qsize() >= 1:
+            self.downloading = True
+            url = self.download_queue.get()
+            ic(url)
+            ic(self.opt)
+            self.pbar_progress.set(0)
+            self.lbl_progress.configure(text=_("\n準備中"))
+            self.lbl_eta.configure(text="\n")
+            with yt_dlp.YoutubeDL(self.opt) as ydl:
+                try:
+                    ydl.download(url)
+                except Exception as e:
+                    CTkMessagebox.CTkMessagebox(
+                        title=_("エラーが発生しました"),
+                        message=e,
+                        icon="cancel",
+                        font=self.fonts,
+                    )
+        self.downloading = False
+        ic("finished")
 
     def progress_hook(self, d):
         self.filename = d.get("filename", "***")
@@ -1020,7 +1032,13 @@ class App(ctk.CTk):
                 self.lbl_eta.configure(text="\n")
                 toast(
                     "yt-dlp_GUI",
-                    _("ダウンロードが完了しました") + "\n" + d["info_dict"]["title"],
+                    _("ダウンロードが完了しました")
+                    + "("
+                    + _("残り：")
+                    + str(self.download_queue.qsize())
+                    + ")"
+                    + "\n"
+                    + d["info_dict"]["title"],
                     app_id=(
                         "yt-dlp_GUI"
                         + (

@@ -310,3 +310,6 @@ msgstr "Embed Metadata"
 
 msgid "通知オン"
 msgstr "Enable Notification"
+
+msgid "残り："
+msgstr "Left: "

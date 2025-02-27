@@ -310,3 +310,6 @@ msgstr "메타데이터 삽입하기"
 
 msgid "通知オン"
 msgstr "알림 켜기"
+
+msgid "残り："
+msgstr "남은: "
