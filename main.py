@@ -28,7 +28,7 @@ from win11toast import toast
 
 import color
 
-VERSION = "v2.8.3"
+VERSION = "v2.9.0"
 
 ic.disable()
 
@@ -848,6 +848,25 @@ class App(ctk.CTk):
                 font=self.fonts,
             )
             return
+
+        if "list=" in url:
+            msg = CTkMessagebox.CTkMessagebox(
+                title=_("確認"),
+                message=_(
+                    "URLに再生リストが含まれています。\n一括ダウンロードしますか？"
+                ),
+                icon="question",
+                option_1="一括ダウンロード",
+                option_2="この動画のみ",
+                font=self.fonts,
+            )
+            responce = msg.get()
+
+            if responce == "この動画のみ":
+                url = url.split("list=")[0]
+                url = url[:-1]
+        ic(url)
+
         if file_path == "":
             CTkMessagebox.CTkMessagebox(
                 title=_("エラー"),
