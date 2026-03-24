@@ -24,11 +24,11 @@ from icecream import ic
 from packaging import version
 from PIL import Image
 from pystray import Icon, Menu, MenuItem
-from win11toast import toast
+from win11toast import notify
 
 import color
 
-VERSION = "v2.9.1"
+VERSION = "v2.9.2"
 
 ic.disable()
 
@@ -1049,7 +1049,7 @@ class App(ctk.CTk):
                     text=self.filename + _("\nダウンロード完了")
                 )
                 self.lbl_eta.configure(text="\n")
-                toast(
+                notify(
                     "yt-dlp_GUI",
                     _("ダウンロードが完了しました")
                     + "("
